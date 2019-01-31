@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/testing.dir/src/main.cpp.o CMakeFiles/testing.dir/src/Memory.cpp.o CMakeFiles/testing.dir/src/Logger.cpp.o  -o testing 
