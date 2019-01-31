@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/carlrocket/Projects/chip8-emulator/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -77,6 +66,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named testing
+# Target rules for targets named main
 
 # Build rule for target.
-testing: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testing
-.PHONY : testing
+main: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 main
+.PHONY : main
 
 # fast build rule for target.
-testing/fast:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/build
-.PHONY : testing/fast
+main/fast:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
 src/Logger.o: src/Logger.cpp.o
 
@@ -129,7 +129,7 @@ src/Logger.o: src/Logger.cpp.o
 
 # target to build an object file
 src/Logger.cpp.o:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/Logger.cpp.o
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Logger.cpp.o
 .PHONY : src/Logger.cpp.o
 
 src/Logger.i: src/Logger.cpp.i
@@ -138,7 +138,7 @@ src/Logger.i: src/Logger.cpp.i
 
 # target to preprocess a source file
 src/Logger.cpp.i:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/Logger.cpp.i
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Logger.cpp.i
 .PHONY : src/Logger.cpp.i
 
 src/Logger.s: src/Logger.cpp.s
@@ -147,7 +147,7 @@ src/Logger.s: src/Logger.cpp.s
 
 # target to generate assembly for a file
 src/Logger.cpp.s:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/Logger.cpp.s
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Logger.cpp.s
 .PHONY : src/Logger.cpp.s
 
 src/Memory.o: src/Memory.cpp.o
@@ -156,7 +156,7 @@ src/Memory.o: src/Memory.cpp.o
 
 # target to build an object file
 src/Memory.cpp.o:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/Memory.cpp.o
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Memory.cpp.o
 .PHONY : src/Memory.cpp.o
 
 src/Memory.i: src/Memory.cpp.i
@@ -165,7 +165,7 @@ src/Memory.i: src/Memory.cpp.i
 
 # target to preprocess a source file
 src/Memory.cpp.i:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/Memory.cpp.i
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Memory.cpp.i
 .PHONY : src/Memory.cpp.i
 
 src/Memory.s: src/Memory.cpp.s
@@ -174,7 +174,7 @@ src/Memory.s: src/Memory.cpp.s
 
 # target to generate assembly for a file
 src/Memory.cpp.s:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/Memory.cpp.s
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Memory.cpp.s
 .PHONY : src/Memory.cpp.s
 
 src/main.o: src/main.cpp.o
@@ -183,7 +183,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/main.cpp.o
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -192,7 +192,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/main.cpp.i
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -201,7 +201,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/testing.dir/build.make CMakeFiles/testing.dir/src/main.cpp.s
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 # Help Target
@@ -210,9 +210,9 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... testing"
+	@echo "... edit_cache"
+	@echo "... main"
 	@echo "... src/Logger.o"
 	@echo "... src/Logger.i"
 	@echo "... src/Logger.s"
