@@ -10,7 +10,8 @@ int main(){
 
 	chip8::Memory memory;
 	memory.store_byte(0xF);
-	memory.read_byte(1);
+	std::cout<<memory.get_memory_pointer();
+	memory.read_byte(0);
 
 	std::cout << "Ending main function..." << std::endl;
 	return 0;

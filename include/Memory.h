@@ -28,6 +28,9 @@ namespace chip8{
     // 'n' is the size of the input vector
     void store_bulk(uint16_t adr, std::vector<uint8_t> data);
 
+    // Function to get mem pointer location
+    uint16_t get_memory_pointer();
+
   protected:
   private:
     // Internal function used to validate addresses before accessing ram

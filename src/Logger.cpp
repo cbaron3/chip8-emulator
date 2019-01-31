@@ -13,7 +13,7 @@ namespace util{
 	}
 
 	void Logger::log(LOG_LEVEL level, std::string msg) const {
-		if(level >= static_cast<LOG_LEVEL>(kmax_debug)){
+		if(level >= static_cast<LOG_LEVEL>(max_debug)){
 			switch (level) {
 			    case LOG_LEVEL::DEBUG:
 			      std::cout << "Debug Message: " << msg << std::endl;
@@ -21,10 +21,15 @@ namespace util{
 			    case LOG_LEVEL::ERROR:
 			      std::cout << "***ERROR*** Message: " << msg << std::endl;
 			      break;
+			    case LOG_LEVEL::NONE:
 			    default:
 			      break;
 			}
 		}
+	}
+
+	void Logger::set_max_log_level(LOG_LEVEL level){
+		max_debug = static_cast<int>(level);
 	}
 
 	void LOG(Logger::LOG_LEVEL level, std::string msg){

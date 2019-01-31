@@ -28,6 +28,11 @@ namespace chip8{
     mem_ptr_ = mem_ptr;
   }
 
+  // Function to get mem pointer location
+  uint16_t Memory::get_memory_pointer(){
+    return mem_ptr_;
+  }
+
   // Read a single byte starting at index location 'adr'
   uint8_t Memory::read_byte(uint16_t adr){
     // Validate address range
@@ -74,12 +79,11 @@ namespace chip8{
   // Store a single byte at the next available index location
   void Memory::store_byte(uint8_t data){
     // Validate address range so we can store a byte in RAM
-    ++mem_ptr_;
-    check_adr_(mem_ptr_);
+    check_adr_(mem_ptr_+1);
 
     util::LOG(LOGTYPE::DEBUG, "Storing " + std::to_string(data) + " from address " + std::to_string(mem_ptr_));
 
-    ram_[mem_ptr_] = data;
+    ram_[mem_ptr_++] = data;
     return;
   }
 
