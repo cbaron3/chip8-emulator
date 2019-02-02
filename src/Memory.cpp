@@ -101,4 +101,12 @@ namespace chip8{
       this->store_byte(*it);
     }
   }
+
+  void Memory::print(){
+    std::cout << "***** MEMORY START*****" << std::endl;
+    for(auto it = ram_.begin(); it != ram_.end(); ++it){
+      std::cout << std::hex <<(unsigned int)*it << " ";
+    }
+    std::cout << "***** MEMORY END*****" << std::endl;
+  }
 }

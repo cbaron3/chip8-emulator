@@ -4,8 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/carlrocket/Projects/chip8-emulator/src/Emulator.cpp" "/home/carlrocket/Projects/chip8-emulator/build/CMakeFiles/main.dir/src/Emulator.cpp.o"
   "/home/carlrocket/Projects/chip8-emulator/src/Logger.cpp" "/home/carlrocket/Projects/chip8-emulator/build/CMakeFiles/main.dir/src/Logger.cpp.o"
   "/home/carlrocket/Projects/chip8-emulator/src/Memory.cpp" "/home/carlrocket/Projects/chip8-emulator/build/CMakeFiles/main.dir/src/Memory.cpp.o"
+  "/home/carlrocket/Projects/chip8-emulator/src/Screen.cpp" "/home/carlrocket/Projects/chip8-emulator/build/CMakeFiles/main.dir/src/Screen.cpp.o"
   "/home/carlrocket/Projects/chip8-emulator/src/main.cpp" "/home/carlrocket/Projects/chip8-emulator/build/CMakeFiles/main.dir/src/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

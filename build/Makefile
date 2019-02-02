@@ -123,6 +123,33 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/Emulator.o: src/Emulator.cpp.o
+
+.PHONY : src/Emulator.o
+
+# target to build an object file
+src/Emulator.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.o
+.PHONY : src/Emulator.cpp.o
+
+src/Emulator.i: src/Emulator.cpp.i
+
+.PHONY : src/Emulator.i
+
+# target to preprocess a source file
+src/Emulator.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.i
+.PHONY : src/Emulator.cpp.i
+
+src/Emulator.s: src/Emulator.cpp.s
+
+.PHONY : src/Emulator.s
+
+# target to generate assembly for a file
+src/Emulator.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.s
+.PHONY : src/Emulator.cpp.s
+
 src/Logger.o: src/Logger.cpp.o
 
 .PHONY : src/Logger.o
@@ -177,6 +204,33 @@ src/Memory.cpp.s:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Memory.cpp.s
 .PHONY : src/Memory.cpp.s
 
+src/Screen.o: src/Screen.cpp.o
+
+.PHONY : src/Screen.o
+
+# target to build an object file
+src/Screen.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.o
+.PHONY : src/Screen.cpp.o
+
+src/Screen.i: src/Screen.cpp.i
+
+.PHONY : src/Screen.i
+
+# target to preprocess a source file
+src/Screen.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.i
+.PHONY : src/Screen.cpp.i
+
+src/Screen.s: src/Screen.cpp.s
+
+.PHONY : src/Screen.s
+
+# target to generate assembly for a file
+src/Screen.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.s
+.PHONY : src/Screen.cpp.s
+
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -213,12 +267,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... main"
+	@echo "... src/Emulator.o"
+	@echo "... src/Emulator.i"
+	@echo "... src/Emulator.s"
 	@echo "... src/Logger.o"
 	@echo "... src/Logger.i"
 	@echo "... src/Logger.s"
 	@echo "... src/Memory.o"
 	@echo "... src/Memory.i"
 	@echo "... src/Memory.s"
+	@echo "... src/Screen.o"
+	@echo "... src/Screen.i"
+	@echo "... src/Screen.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

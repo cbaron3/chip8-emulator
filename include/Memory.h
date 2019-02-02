@@ -31,6 +31,9 @@ namespace chip8{
     // Function to get mem pointer location
     uint16_t get_memory_pointer();
 
+    // Utility function
+    void print();
+
   protected:
   private:
     // Internal function used to validate addresses before accessing ram

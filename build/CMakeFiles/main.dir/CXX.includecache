@@ -9,8 +9,20 @@
 /home/carlrocket/Projects/chip8-emulator/include/Chip8.h
 iostream
 -
+array
+-
 exception
 -
+
+/home/carlrocket/Projects/chip8-emulator/include/Emulator.h
+string
+-
+stack
+-
+Memory.h
+/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+Logger.h
+/home/carlrocket/Projects/chip8-emulator/include/Logger.h
 
 /home/carlrocket/Projects/chip8-emulator/include/Logger.h
 string
@@ -25,6 +37,32 @@ vector
 -
 Chip8.h
 /home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+
+/home/carlrocket/Projects/chip8-emulator/include/Screen.h
+array
+-
+Chip8.h
+/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+
+/home/carlrocket/Projects/chip8-emulator/src/Emulator.cpp
+iostream
+-
+fstream
+-
+vector
+-
+array
+-
+string
+-
+../include/Chip8.h
+/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+../include/Emulator.h
+/home/carlrocket/Projects/chip8-emulator/include/Emulator.h
+../include/Memory.h
+/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+../include/Logger.h
+/home/carlrocket/Projects/chip8-emulator/include/Logger.h
 
 /home/carlrocket/Projects/chip8-emulator/src/Logger.cpp
 iostream
@@ -44,6 +82,18 @@ exception
 ../include/Logger.h
 /home/carlrocket/Projects/chip8-emulator/include/Logger.h
 
+/home/carlrocket/Projects/chip8-emulator/src/Screen.cpp
+cstring
+-
+array
+-
+../include/Chip8.h
+/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+../include/Logger.h
+/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+../include/Screen.h
+/home/carlrocket/Projects/chip8-emulator/include/Screen.h
+
 /home/carlrocket/Projects/chip8-emulator/src/main.cpp
 iostream
 -
@@ -53,8 +103,8 @@ vector
 -
 string
 -
-../include/Memory.h
-/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+../include/Emulator.h
+/home/carlrocket/Projects/chip8-emulator/include/Emulator.h
 ../include/Logger.h
 /home/carlrocket/Projects/chip8-emulator/include/Logger.h
 
