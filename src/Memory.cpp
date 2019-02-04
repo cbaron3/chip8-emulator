@@ -13,9 +13,9 @@ namespace chip8{
     mem_ptr_ = 0;
   }
 
-  // Used to validate address range. Valid memory is only between 0 and size-1
+  // Used to validate address.
   void Memory::check_adr_(uint16_t adr){
-    if(adr < 0 || adr > MEM_SPACE - 1){
+    if(adr > MEM_SPACE - 1){
       throw std::out_of_range("Address undefined in memory space");
     }
   }
