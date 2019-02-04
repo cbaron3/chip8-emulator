@@ -52,7 +52,7 @@ namespace chip8{
     check_adr_(adr);
 
     // High byte is the one with the smaller address value (closer to 0)
-    uint16_t data = ( (ram_[adr] << 8)) | (ram_[adr+1] & 0xFF00);
+    uint16_t data = ( (ram_[adr] << 8)) | (ram_[adr+1]);
 
     util::LOG(LOGTYPE::DEBUG, "Read " + std::to_string(data) + " from address " + std::to_string(adr));
 
