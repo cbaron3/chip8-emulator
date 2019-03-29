@@ -63,7 +63,7 @@ namespace chip8{
 
 	// TODO: (Carl Baron: Feb 2nd): Badly designed interface between the two classes
 	void Emulator::print_memory(){
-		// memory.print();
+		std::cout << memory;
 	}
 
 	uint16_t Emulator::fetch_opcode(){
@@ -73,8 +73,6 @@ namespace chip8{
 		prog_counter_++;
 
 		uint16_t s =  ((first_byte << 8) | (second_byte));
-
-		std::cout << "######## Read: " << std::hex << s << std::endl;
 
 		if (prog_counter_ >= MEM_SPACE){
 			exit(0);

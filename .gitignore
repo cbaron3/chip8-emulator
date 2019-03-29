@@ -124,3 +124,4 @@ tests/CMakeFiles/tests.dir/link.txt
 tests/CMakeFiles/tests.dir/progress.make
 tests/Makefile
 tests/tests
+build/main
