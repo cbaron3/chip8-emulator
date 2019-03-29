@@ -31,7 +31,11 @@ namespace chip8
       auto find_result = memory_space.find(adr);
 
       if (find_result == memory_space.end())
-          throw std::out_of_range("Address undefined");
+      {
+          std::string adr_string = " Start: " + std::to_string(start_adr_) + " Requested: " + std::to_string(adr) + " End: " + std::to_string(end_adr_);
+          throw std::out_of_range("Address undefined." + adr_string);
+      }
+          
       else
       {
           return find_result->second;
@@ -62,11 +66,14 @@ namespace chip8
 
   // Used to validate address.
   void MemoryMap::validate_adr_(const unsigned int& adr) const{
+  // TODO: (Carl Baron: Mar 29th): Reduce string recreation
+  std::string adr_string = " Start: " + std::to_string(start_adr_) + " Requested: " + std::to_string(adr) + " End: " + std::to_string(end_adr_);
+
   if(adr > end_adr_)
-      throw std::out_of_range("Address greater than maximum memory address");
+      throw std::out_of_range("Address greater than maximum memory address." + adr_string);
 
   if(adr < start_adr_)
-      throw std::out_of_range("Address less than minimum memory address");
+      throw std::out_of_range("Address less than minimum memory address." + adr_string);
   }
 
   std::ostream& operator<<(std::ostream& os, const MemoryMap& dt)

@@ -16,7 +16,7 @@ namespace chip8{
 	void Emulator::load_fonts(){
 		// Convert fontset array into vector
 		std::vector<uint8_t> v(FONTSET.begin(), FONTSET.end());
-
+		
 
 		unsigned int mem_ptr = FONT_START;
 		for(auto font_byte : v)
