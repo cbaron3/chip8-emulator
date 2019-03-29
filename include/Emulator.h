@@ -20,7 +20,7 @@ namespace chip8{
 
   protected:
   private:
-    Memory memory;
+    MemoryMap memory;
 
     std::stack<uint16_t> stack_;
 	uint16_t prog_counter_ = PROG_START;

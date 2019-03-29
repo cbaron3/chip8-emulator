@@ -115,7 +115,7 @@ namespace chip8{
   }
 
     // Use CLIMITS
-  MemoryMap::MemoryMap( void ) : MemoryMap(0, INT_MAX)
+  MemoryMap::MemoryMap( void ) : MemoryMap(INT_MAX, 0)
   { 
       // do nothing
   }
@@ -134,7 +134,9 @@ namespace chip8{
       if (find_result == memory_space.end())
           throw std::out_of_range("Address undefined");
       else
+      {
           return find_result->second;
+      }
   }
 
   // Add new val to map at adr. First validate adr. If address is undefined, aka not added yet, insert val at adr.
@@ -161,6 +163,9 @@ namespace chip8{
 
   // Used to validate address.
   void MemoryMap::validate_adr_(const unsigned int& adr) const{
+    std::cout << "Start " << start_adr_ << std::endl;
+    std::cout << "End " << end_adr_ << std::endl;
+    std::cout << "Error " << adr << std::endl;
   if(adr > end_adr_)
       throw std::out_of_range("Address greater than maximum memory address");
 

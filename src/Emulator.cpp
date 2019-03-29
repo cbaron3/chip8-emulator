@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <array>
+#include <cstddef>
 #include <string>
 
 #include "../include/Chip8.h"
@@ -16,7 +17,13 @@ namespace chip8{
 		// Convert fontset array into vector
 		std::vector<uint8_t> v(FONTSET.begin(), FONTSET.end());
 
-		memory.store_bulk(FONT_START, v);
+
+		unsigned int mem_ptr = FONT_START;
+		for(auto font_byte : v)
+		{
+			memory.store(mem_ptr, (std::byte) font_byte);
+			mem_ptr+=1;
+		}
 	}
 
 	// Load a rom from filepath fp into memory
@@ -45,17 +52,29 @@ namespace chip8{
 		f_rom.close();
 
 		// Store vector in memory
-		memory.store_bulk(PROG_START, rom);
+		unsigned int mem_ptr = PROG_START;
+		for(auto rom_byte : rom)
+		{
+			memory.store(mem_ptr, (std::byte) rom_byte);
+			++mem_ptr;
+		}
+		
 	}
 
 	// TODO: (Carl Baron: Feb 2nd): Badly designed interface between the two classes
 	void Emulator::print_memory(){
-		memory.print();
+		// memory.print();
 	}
 
 	uint16_t Emulator::fetch_opcode(){
-		uint16_t s =  memory.read_short(prog_counter_);
-		prog_counter_ += 2;
+		uint8_t first_byte = (uint8_t) memory.read(prog_counter_);
+		prog_counter_++;
+		uint8_t second_byte = (uint8_t) memory.read(prog_counter_);
+		prog_counter_++;
+
+		uint16_t s =  ((first_byte << 8) | (second_byte));
+
+		std::cout << "######## Read: " << std::hex << s << std::endl;
 
 		if (prog_counter_ >= MEM_SPACE){
 			exit(0);

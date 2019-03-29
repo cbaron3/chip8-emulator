@@ -1,4 +1,4 @@
-#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
 
 #IncludeRegexScan: ^.*$
 
@@ -6,45 +6,45 @@
 
 #IncludeRegexTransform: 
 
-/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
-iostream
--
-array
--
-exception
--
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Chip8.h
 
-/home/carlrocket/Projects/chip8-emulator/include/Emulator.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Emulator.h
 string
 -
 stack
 -
 Memory.h
-/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 Logger.h
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 string
 -
 array
 -
 
-/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 array
 -
 vector
 -
+unordered_map
+-
+cstddef
+-
+climits
+-
 Chip8.h
-/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Chip8.h
 
-/home/carlrocket/Projects/chip8-emulator/include/Screen.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Screen.h
 array
 -
 Chip8.h
-/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Chip8.h
 
-/home/carlrocket/Projects/chip8-emulator/src/Emulator.cpp
+/home/administrator/SHARE/SHARE/other/chip8-emulator/src/Emulator.cpp
 iostream
 -
 fstream
@@ -53,48 +53,60 @@ vector
 -
 array
 -
+cstddef
+-
 string
 -
 ../include/Chip8.h
-/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Chip8.h
 ../include/Emulator.h
-/home/carlrocket/Projects/chip8-emulator/include/Emulator.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Emulator.h
 ../include/Memory.h
-/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 ../include/Logger.h
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 
-/home/carlrocket/Projects/chip8-emulator/src/Logger.cpp
+/home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp
 iostream
 -
 ../include/Logger.h
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 
-/home/carlrocket/Projects/chip8-emulator/src/Memory.cpp
+/home/administrator/SHARE/SHARE/other/chip8-emulator/src/Memory.cpp
 vector
 -
 string
 -
 exception
 -
+climits
+-
+iostream
+-
+functional
+-
+utility
+-
+algorithm
+-
 ../include/Memory.h
-/home/carlrocket/Projects/chip8-emulator/include/Memory.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 ../include/Logger.h
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 
-/home/carlrocket/Projects/chip8-emulator/src/Screen.cpp
+/home/administrator/SHARE/SHARE/other/chip8-emulator/src/Screen.cpp
 cstring
 -
 array
 -
 ../include/Chip8.h
-/home/carlrocket/Projects/chip8-emulator/include/Chip8.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Chip8.h
 ../include/Logger.h
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 ../include/Screen.h
-/home/carlrocket/Projects/chip8-emulator/include/Screen.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Screen.h
 
-/home/carlrocket/Projects/chip8-emulator/src/main.cpp
+/home/administrator/SHARE/SHARE/other/chip8-emulator/src/main.cpp
 iostream
 -
 fstream
@@ -104,7 +116,7 @@ vector
 string
 -
 ../include/Emulator.h
-/home/carlrocket/Projects/chip8-emulator/include/Emulator.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Emulator.h
 ../include/Logger.h
-/home/carlrocket/Projects/chip8-emulator/include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 
