@@ -1,11 +1,7 @@
 #ifndef CHIP8_H
 #define CHIP8_H
+
 // File for keeping holding Chip8 system variables
-
-#include <iostream>
-#include <array>
-#include <exception>
-
 namespace chip8{
   constexpr size_t MEM_SPACE = 0x0FFF;   // Const for denoting size of memory map
   constexpr long  FONT_START = 0x0000;   // Const for denoting start of Chip8 program

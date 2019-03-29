@@ -7,6 +7,7 @@
 #include "../include/Emulator.h"
 #include "../include/Logger.h"
 
+// TODO: (Carl Baron: Mar 29th): Pass memory, instruction set, and graphics renderer into Emulator class
 
 std::vector<uint8_t> load_rom(std::string file_name);
 

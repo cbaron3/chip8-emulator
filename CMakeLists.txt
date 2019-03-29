@@ -5,6 +5,6 @@ include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 add_executable(main ${SOURCES})
