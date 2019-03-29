@@ -19,7 +19,7 @@ namespace chip8{
 
         std::byte read( const unsigned int& adr ) const; 
         bool store( const unsigned int& adr, const std::byte& val, const bool& update = false );  // If already exists, update or not. // Create new key if does not exist. Verify map complexity
-
+        // TODO: (Carl Baron: Mar 29th): Implement
         // void set_access_limits( int start_adr = 0, int size = INT_MAX );
 
         friend std::ostream& operator<<(std::ostream& os, const MemoryMap& dt);

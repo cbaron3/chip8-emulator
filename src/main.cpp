@@ -54,6 +54,22 @@ int main(int argc, char **argv){
 }
 
 
+// // for(;;)
+/* {
+		mem_adr = cpu.get_pc()
+
+		opcode = memory.read(mem_adr)
+
+		cpu.execute(mem_adr)
+
+		if cpu.draw_flag() == true:
+			graphics.render(cpu.get_pixels())
+
+		cpu.update_key_input()
+
+   }*/ 
+
+
 // Emulator gets passed in a memory space and a cpu object and a graphics
 // Every emulator loop, call cpu.getMemoryPointer and call memory.read() on that memorypointer to get the opcode
 
