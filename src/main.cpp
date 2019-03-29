@@ -52,3 +52,8 @@ int main(int argc, char **argv){
 	std::cout << "Ending main function..." << std::endl;
 	return 0;
 }
+
+
+// Emulator gets passed in a memory space and a cpu object and a graphics
+// Every emulator loop, call cpu.getMemoryPointer and call memory.read() on that memorypointer to get the opcode
+

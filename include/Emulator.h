@@ -23,7 +23,7 @@ namespace chip8{
     MemoryMap memory;
 
     std::stack<uint16_t> stack_;
-	uint16_t prog_counter_ = PROG_START;
+	  uint16_t prog_counter_ = PROG_START;
   };
 }
 
