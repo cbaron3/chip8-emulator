@@ -4,6 +4,7 @@
 #include <climits>
 #include <iostream>
 #include <functional>
+#include <memory>
 #include <utility>
 #include <algorithm>
 #include "../include/Memory.h"
@@ -19,9 +20,14 @@ namespace chip8
       // do nothing
   }
 
-  MemoryMap::MemoryMap(  unsigned int mem_size, unsigned int start_adr ) : start_adr_(start_adr), end_adr_(start_adr + mem_size)
+  MemoryMap::MemoryMap( const unsigned int& mem_size, const unsigned int& start_adr ) : start_adr_(start_adr), end_adr_(start_adr + mem_size)
   { 
       // do nothing
+  }
+
+  std::unique_ptr<MemoryMap> MemoryMap::makeMemoryMap( const unsigned int& mem_size, const unsigned int& start_adr )
+  {
+      return make_unique<MemoryMap>(mem_size, start_adr); 
   }
 
   std::byte MemoryMap::read( const unsigned int& adr ) const
@@ -52,14 +58,20 @@ namespace chip8
 
       if (find_result == memory_space.end())
       {
-          memory_space.emplace(adr,val);
+        memory_space.emplace(adr,val);
+        return true;
       }
       else
       {
         if(update == true)
-          {
-              memory_space.at(find_result->first) = val;
-          }
+        {
+          memory_space.at(find_result->first) = val;
+          return true;
+        }
+        else
+        {
+          return false;
+        }
       }
           
   }

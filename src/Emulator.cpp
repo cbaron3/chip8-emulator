@@ -12,6 +12,12 @@
 #include "../include/Logger.h"
 
 namespace chip8{
+
+	Emulator::Emulator(std::unique_ptr<MemoryMap> memory) : memory_map(std::move(memory))
+	{
+		// do nothing
+	}
+
 	// Load font set into memory
 	void Emulator::load_fonts(){
 		// Convert fontset array into vector
@@ -21,7 +27,7 @@ namespace chip8{
 		unsigned int mem_ptr = FONT_START;
 		for(auto font_byte : v)
 		{
-			memory.store(mem_ptr, (std::byte) font_byte);
+			memory_map->store(mem_ptr, (std::byte) font_byte);
 			mem_ptr+=1;
 		}
 	}
@@ -55,7 +61,7 @@ namespace chip8{
 		unsigned int mem_ptr = PROG_START;
 		for(auto rom_byte : rom)
 		{
-			memory.store(mem_ptr, (std::byte) rom_byte);
+			memory_map->store(mem_ptr, (std::byte) rom_byte);
 			++mem_ptr;
 		}
 		
@@ -63,13 +69,13 @@ namespace chip8{
 
 	// TODO: (Carl Baron: Feb 2nd): Badly designed interface between the two classes
 	void Emulator::print_memory(){
-		std::cout << memory;
+		std::cout << memory_map;
 	}
 
 	uint16_t Emulator::fetch_opcode(){
-		uint8_t first_byte = (uint8_t) memory.read(prog_counter_);
+		uint8_t first_byte = (uint8_t) memory_map->read(prog_counter_);
 		prog_counter_++;
-		uint8_t second_byte = (uint8_t) memory.read(prog_counter_);
+		uint8_t second_byte = (uint8_t) memory_map->read(prog_counter_);
 		prog_counter_++;
 
 		uint16_t s =  ((first_byte << 8) | (second_byte));

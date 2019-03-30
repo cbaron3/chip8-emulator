@@ -15,7 +15,7 @@ int main(int argc, char **argv){
 	std::cout << "Running main function..." << std::endl;
 	util::Logger::getInstance()->set_max_log_level(LOGTYPE::DEBUG);
 
-	chip8::Emulator emulator;
+	chip8::Emulator emulator( MemoryMap::makeMemoryMap(0, 4096) );
 
 	switch (argc) {
 	    case 1:

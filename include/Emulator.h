@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stack>
+#include <memory>
 
 #include "Memory.h"
 #include "Logger.h"
@@ -11,6 +12,10 @@ namespace chip8{
   // This acts as the 'cpu' for the emulator
   class Emulator{
   public:
+
+    Emulator() = delete;
+    Emulator(std::unique_ptr<MemoryMap> memory)
+
     void load_fonts();
     void load_rom(std::string fp);
     void print_memory();
@@ -20,7 +25,7 @@ namespace chip8{
 
   protected:
   private:
-    MemoryMap memory;
+    std::unique_ptr<MemoryMap> memory_map;
 
     std::stack<uint16_t> stack_;
 	  uint16_t prog_counter_ = PROG_START;
