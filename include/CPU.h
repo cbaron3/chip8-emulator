@@ -3,54 +3,57 @@
 
 #include <array>
 #include <stack>
+#include <memory>           // Memory for unique ptr
 
 namespace chip8
 {
 	class CPU
 	{
+
 	public:
-		CPU();
+		void execute( const unsigned int& opcode);
 
-		void execute(uint16_t opcode)
-		{
-			continue;
-		}
-
-		bool draw_flag() const
-		{
-			return draw;
-		}
-
-		std::array<std::array<bool, 64>, 32> get_pixel_map() const
-		{
-			return pixel_map;
-		}
-
-		unsigned int get_pc() const
-		{
-			return prog_counter_;
-		}
-
-		void update_keys(std::array<bool, 16> keys)
-		{
-			keys_ = keys;
-		}
+		static std::unique_ptr<CPU> makeCPU();
 
 	private:
+		CPU();
 
-		std::array<uint16, 16> registers_;		    		// Registers
+		/* CPU OPCODE FUNCTION DEFINITIONS BELOW */
+		typedef void(*OpcodeTable)( const unsigned int& opcode );
 
-		std::array<bool, 16> keys_;		    			    // Key state
+		OpcodeTable opcodes[16];
 
-		bool draw;											// Draw flag
+		static void opcode_0xxx( const unsigned int& opcode );
 
-		std::array<std::array<bool, 64>, 32> pixel_map_;	// Pixel state
-
-		unsigned int prog_counter_;							// Where in the program we are 
-
-		unsigned int index_register_;						// Used for index register, which modies operand addresses during program run
-
-		std::stack<uint16_t> stack_;						// Used to store returna ddresses when a subroutine is called
+		static void opcode_1nnn( const unsigned int& opcode );
+		
+		static void opcode_2nnn( const unsigned int& opcode );
+		
+		static void opcode_3xnn( const unsigned int& opcode );
+		
+		static void opcode_4xnn( const unsigned int& opcode );
+		
+		static void opcode_5xy0( const unsigned int& opcode );
+		
+		static void opcode_6xnn( const unsigned int& opcode );
+		
+		static void opcode_7xnn( const unsigned int& opcode );
+		
+		static void opcode_8XYx( const unsigned int& opcode );
+		
+		static void opcode_9xy0( const unsigned int& opcode );
+		
+		static void opcode_Annn( const unsigned int& opcode );
+		
+		static void opcode_Bxnn( const unsigned int& opcode );
+		
+		static void opcode_Cxnn( const unsigned int& opcode );
+		
+		static void opcode_Dxyn( const unsigned int& opcode );
+		
+		static void opcode_EXxx( const unsigned int& opcode );
+		
+		static void opcode_FXxx( const unsigned int& opcode );
 	};
 }
 

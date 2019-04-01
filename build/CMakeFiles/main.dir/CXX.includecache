@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/CPU.h
+array
+-
+stack
+-
+memory
+-
+
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Chip8.h
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Emulator.h
@@ -19,6 +27,8 @@ Memory.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 Logger.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
+CPU.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/CPU.h
 chip8.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/chip8.h
 
@@ -44,6 +54,14 @@ Chip8.h
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/chip8.h
 
+/home/administrator/SHARE/SHARE/other/chip8-emulator/src/CPU.cpp
+../include/CPU.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/CPU.h
+iostream
+-
+../include/Logger.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
+
 /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Emulator.cpp
 iostream
 -
@@ -65,6 +83,8 @@ string
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 ../include/Logger.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
+../include/CPU.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/CPU.h
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp
 iostream
@@ -117,6 +137,8 @@ vector
 -
 string
 -
+../include/CPU.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/CPU.h
 ../include/Emulator.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Emulator.h
 ../include/Memory.h

@@ -7,6 +7,7 @@
 
 #include "Memory.h"
 #include "Logger.h"
+#include "CPU.h"
 
 #include "chip8.h"
 
@@ -16,18 +17,16 @@ namespace chip8{
   public:
 
     Emulator() = delete;
-    Emulator(std::unique_ptr<MemoryMap> memory);
+    Emulator(std::unique_ptr<MemoryMap> memory, std::unique_ptr<CPU> cpu);
 
     void load_fonts();
     void load_rom(std::string fp);
     void print_memory();
-
-    void execute_opcode(uint16_t opcode);
-    uint16_t fetch_opcode();
-
+    void next_instruction();
   protected:
   private:
     std::unique_ptr<MemoryMap> memory_map;
+    std::unique_ptr<CPU> chip8_cpu;
 
     std::stack<uint16_t> stack_;
 	  uint16_t prog_counter_ = PROG_START;

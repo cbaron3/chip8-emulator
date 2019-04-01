@@ -123,6 +123,33 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/CPU.o: src/CPU.cpp.o
+
+.PHONY : src/CPU.o
+
+# target to build an object file
+src/CPU.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.o
+.PHONY : src/CPU.cpp.o
+
+src/CPU.i: src/CPU.cpp.i
+
+.PHONY : src/CPU.i
+
+# target to preprocess a source file
+src/CPU.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.i
+.PHONY : src/CPU.cpp.i
+
+src/CPU.s: src/CPU.cpp.s
+
+.PHONY : src/CPU.s
+
+# target to generate assembly for a file
+src/CPU.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.s
+.PHONY : src/CPU.cpp.s
+
 src/Emulator.o: src/Emulator.cpp.o
 
 .PHONY : src/Emulator.o
@@ -267,6 +294,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... main"
 	@echo "... edit_cache"
+	@echo "... src/CPU.o"
+	@echo "... src/CPU.i"
+	@echo "... src/CPU.s"
 	@echo "... src/Emulator.o"
 	@echo "... src/Emulator.i"
 	@echo "... src/Emulator.s"
