@@ -133,7 +133,7 @@ namespace chip8
 		unsigned int register_adr = (opcode & 0x0F00) >> 8;
 		unsigned int nn = (opcode & 0x00FF);
 
-		if(register_adr == nn)
+		if(cpu->registers[register_adr] == nn)
 		{
 			cpu->prog_counter += 2;
 		}
@@ -145,7 +145,7 @@ namespace chip8
 		unsigned int register_adr = (opcode & 0x0F00) >> 8;
 		unsigned int nn = (opcode & 0x00FF);
 
-		if(register_adr != nn)
+		if(cpu->registers[register_adr] != nn)
 		{
 			cpu->prog_counter += 2;
 		}
@@ -157,7 +157,7 @@ namespace chip8
 		unsigned int vx = (opcode & 0x0F00) >> 8;
 		unsigned int vy = (opcode & 0x00F0) >> 4;
 
-		if(vx == vy)
+		if(cpu->registers[vx] == cpu->registers[vy])
 		{
 			cpu->prog_counter += 2;
 		}
