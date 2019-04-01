@@ -5,7 +5,9 @@
 #include <string>
 
 #include "../include/Emulator.h"
+#include "../include/Memory.h"
 #include "../include/Logger.h"
+
 
 // TODO: (Carl Baron: Mar 29th): Pass memory, instruction set, and graphics renderer into Emulator class
 
@@ -15,7 +17,7 @@ int main(int argc, char **argv){
 	std::cout << "Running main function..." << std::endl;
 	util::Logger::getInstance()->set_max_log_level(LOGTYPE::DEBUG);
 
-	chip8::Emulator emulator( MemoryMap::makeMemoryMap(0, 4096) );
+	chip8::Emulator emulator( chip8::MemoryMap::makeMemoryMap(4096, 0) );
 
 	switch (argc) {
 	    case 1:

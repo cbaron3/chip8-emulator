@@ -8,13 +8,15 @@
 #include "Memory.h"
 #include "Logger.h"
 
+#include "chip8.h"
+
 namespace chip8{
   // This acts as the 'cpu' for the emulator
   class Emulator{
   public:
 
     Emulator() = delete;
-    Emulator(std::unique_ptr<MemoryMap> memory)
+    Emulator(std::unique_ptr<MemoryMap> memory);
 
     void load_fonts();
     void load_rom(std::string fp);

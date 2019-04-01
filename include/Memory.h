@@ -11,7 +11,6 @@
  * \ingroup chip8
  */
 namespace chip8{
-
     /**
      * @brief      Class for basic c++17 byte memory map.
      */
@@ -41,7 +40,6 @@ namespace chip8{
         void validate_adr_(const unsigned int& adr) const;
 
     public:
-
         /**
          * @brief      Makes a memory map. Valid addresses are in range [start address, start_address + mem_size]
          *
@@ -50,7 +48,7 @@ namespace chip8{
          *
          * @return     Unique MemoryMap pointer
          */
-        static std::unique_ptr<MemoryMap> makeMemoryMap( const unsigned int& mem_size, const unsigned int& start_adr = 0 );
+        static std::unique_ptr<MemoryMap> makeMemoryMap( const unsigned int& mem_size, const unsigned int& start_adr );
 
         /**
          * @brief      Store a byte value in

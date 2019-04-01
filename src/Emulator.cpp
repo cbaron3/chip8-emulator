@@ -27,7 +27,7 @@ namespace chip8{
 		unsigned int mem_ptr = FONT_START;
 		for(auto font_byte : v)
 		{
-			memory_map->store(mem_ptr, (std::byte) font_byte);
+			memory_map->store( (std::byte) font_byte, mem_ptr);
 			mem_ptr+=1;
 		}
 	}
@@ -61,7 +61,7 @@ namespace chip8{
 		unsigned int mem_ptr = PROG_START;
 		for(auto rom_byte : rom)
 		{
-			memory_map->store(mem_ptr, (std::byte) rom_byte);
+			memory_map->store( (std::byte) rom_byte, mem_ptr);
 			++mem_ptr;
 		}
 		
@@ -69,7 +69,7 @@ namespace chip8{
 
 	// TODO: (Carl Baron: Feb 2nd): Badly designed interface between the two classes
 	void Emulator::print_memory(){
-		std::cout << memory_map;
+		std::cout << *memory_map;
 	}
 
 	uint16_t Emulator::fetch_opcode(){

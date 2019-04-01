@@ -27,7 +27,11 @@ namespace chip8
 
   std::unique_ptr<MemoryMap> MemoryMap::makeMemoryMap( const unsigned int& mem_size, const unsigned int& start_adr )
   {
-      return make_unique<MemoryMap>(mem_size, start_adr); 
+      struct MakeUniquePublic : public MemoryMap {
+        MakeUniquePublic( const unsigned int& mem_size, const unsigned int& start_adr ) : MemoryMap(mem_size, start_adr) {}
+      };
+      
+      return std::make_unique<MakeUniquePublic>(mem_size, start_adr); 
   }
 
   std::byte MemoryMap::read( const unsigned int& adr ) const
@@ -50,7 +54,7 @@ namespace chip8
 
   // Add new val to map at adr. First validate adr. If address is undefined, aka not added yet, insert val at adr.
   // If adr does exist, update val at adr iff update is true
-  bool MemoryMap::store( const unsigned int& adr, const std::byte& val, const bool& update )
+  bool MemoryMap::store( const std::byte& val, const unsigned int& adr, const bool& update )
   {
       validate_adr_(adr);
 

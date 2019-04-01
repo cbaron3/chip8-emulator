@@ -5,12 +5,12 @@ CMakeFiles/main.dir/src/Emulator.cpp.o: ../include/Chip8.h
 CMakeFiles/main.dir/src/Emulator.cpp.o: ../include/Emulator.h
 CMakeFiles/main.dir/src/Emulator.cpp.o: ../include/Logger.h
 CMakeFiles/main.dir/src/Emulator.cpp.o: ../include/Memory.h
+CMakeFiles/main.dir/src/Emulator.cpp.o: ../include/chip8.h
 CMakeFiles/main.dir/src/Emulator.cpp.o: ../src/Emulator.cpp
 
 CMakeFiles/main.dir/src/Logger.cpp.o: ../include/Logger.h
 CMakeFiles/main.dir/src/Logger.cpp.o: ../src/Logger.cpp
 
-CMakeFiles/main.dir/src/Memory.cpp.o: ../include/Chip8.h
 CMakeFiles/main.dir/src/Memory.cpp.o: ../include/Logger.h
 CMakeFiles/main.dir/src/Memory.cpp.o: ../include/Memory.h
 CMakeFiles/main.dir/src/Memory.cpp.o: ../src/Memory.cpp
@@ -20,9 +20,9 @@ CMakeFiles/main.dir/src/Screen.cpp.o: ../include/Logger.h
 CMakeFiles/main.dir/src/Screen.cpp.o: ../include/Screen.h
 CMakeFiles/main.dir/src/Screen.cpp.o: ../src/Screen.cpp
 
-CMakeFiles/main.dir/src/main.cpp.o: ../include/Chip8.h
 CMakeFiles/main.dir/src/main.cpp.o: ../include/Emulator.h
 CMakeFiles/main.dir/src/main.cpp.o: ../include/Logger.h
 CMakeFiles/main.dir/src/main.cpp.o: ../include/Memory.h
+CMakeFiles/main.dir/src/main.cpp.o: ../include/chip8.h
 CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp
 
