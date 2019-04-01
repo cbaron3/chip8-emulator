@@ -19,7 +19,6 @@ namespace chip8{
     Emulator() = delete;
     Emulator(std::unique_ptr<MemoryMap> memory, std::unique_ptr<CPU> cpu);
 
-    void load_fonts();
     void load_rom(std::string fp);
     void print_memory();
     void next_instruction();

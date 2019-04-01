@@ -5,6 +5,7 @@
 #include <stack>
 #include <memory>           // Memory for unique ptr
 
+
 namespace chip8
 {
 	class CPU
@@ -15,45 +16,56 @@ namespace chip8
 
 		static std::unique_ptr<CPU> makeCPU();
 
+		// For testing
+		void print_pixels( void ) const;
+
 	private:
 		CPU();
 
+	public:
+		std::array<std::array<bool, 64>, 32> pixels;
+		std::array<unsigned int, 16> registers;
+		std::stack<unsigned int> subroutine_stack;
+		unsigned int prog_counter;
+		bool exit;
+
+	private:
 		/* CPU OPCODE FUNCTION DEFINITIONS BELOW */
-		typedef void(*OpcodeTable)( const unsigned int& opcode );
+		typedef void(*OpcodeTable)( CPU* cpu, const unsigned int& opcode );
 
 		OpcodeTable opcodes[16];
 
-		static void opcode_0xxx( const unsigned int& opcode );
+		static void opcode_0xxx( CPU* cpu, const unsigned int& opcode );
 
-		static void opcode_1nnn( const unsigned int& opcode );
+		static void opcode_1nnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_2nnn( const unsigned int& opcode );
+		static void opcode_2nnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_3xnn( const unsigned int& opcode );
+		static void opcode_3xnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_4xnn( const unsigned int& opcode );
+		static void opcode_4xnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_5xy0( const unsigned int& opcode );
+		static void opcode_5xy0( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_6xnn( const unsigned int& opcode );
+		static void opcode_6xnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_7xnn( const unsigned int& opcode );
+		static void opcode_7xnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_8XYx( const unsigned int& opcode );
+		static void opcode_8XYx( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_9xy0( const unsigned int& opcode );
+		static void opcode_9xy0( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_Annn( const unsigned int& opcode );
+		static void opcode_Annn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_Bxnn( const unsigned int& opcode );
+		static void opcode_Bxnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_Cxnn( const unsigned int& opcode );
+		static void opcode_Cxnn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_Dxyn( const unsigned int& opcode );
+		static void opcode_Dxyn( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_EXxx( const unsigned int& opcode );
+		static void opcode_EXxx( CPU* cpu, const unsigned int& opcode );
 		
-		static void opcode_FXxx( const unsigned int& opcode );
+		static void opcode_FXxx( CPU* cpu, const unsigned int& opcode );
 	};
 }
 

@@ -20,23 +20,10 @@ namespace chip8{
 		// do nothing
 	}
 
-	// Load font set into memory
-	void Emulator::load_fonts(){
-		// Convert fontset array into vector
-		std::vector<uint8_t> v(FONTSET.begin(), FONTSET.end());
-		
-
-		unsigned int mem_ptr = FONT_START;
-		for(auto font_byte : v)
-		{
-			memory_map->store( (std::byte) font_byte, mem_ptr);
-			mem_ptr+=1;
-		}
-	}
-
-	// Load a rom from filepath fp into memory
+	// Load a rom from filepath fp into memory. First load fonts
 	void Emulator::load_rom(std::string fp){
 		// Destination vector for the bytes
+		std::vector<uint8_t> v(FONTSET.begin(), FONTSET.end());
 		std::vector<uint8_t> rom;
 
 		// Open rom file
@@ -59,8 +46,15 @@ namespace chip8{
 		// Close file
 		f_rom.close();
 
+		unsigned int mem_ptr = FONT_START;
+		for(auto font_byte : v)
+		{
+			memory_map->store( (std::byte) font_byte, mem_ptr);
+			mem_ptr+=1;
+		}
+
 		// Store vector in memory
-		unsigned int mem_ptr = PROG_START;
+		mem_ptr = PROG_START;
 		for(auto rom_byte : rom)
 		{
 			memory_map->store( (std::byte) rom_byte, mem_ptr);

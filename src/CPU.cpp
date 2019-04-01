@@ -6,7 +6,10 @@
 namespace chip8
 {
 	CPU::CPU()
-	{
+	{	
+		prog_counter = 0;
+		exit = false;
+
 		opcodes[0] =  opcode_0xxx;
 		opcodes[1] =  opcode_1nnn; 	
 		opcodes[2] =  opcode_2nnn;
@@ -23,6 +26,10 @@ namespace chip8
 		opcodes[13] = opcode_Dxyn;
 		opcodes[14] = opcode_EXxx;
 		opcodes[15] = opcode_FXxx;
+
+		std::fill ( &pixels[0][0],
+	      		    &pixels[0][0] + sizeof(pixels) / sizeof(pixels[0][0]),
+	      			0 );
 	}
 
 	std::unique_ptr<CPU> CPU::makeCPU()
@@ -44,24 +51,55 @@ namespace chip8
 		}
 		else
 		{
-			opcodes[opcode_to_execute]( opcode );	
+			opcodes[opcode_to_execute]( this, opcode );	
 		}
 		
 	}
 
-	void CPU::opcode_0xxx( const unsigned int& opcode )
+	void CPU::print_pixels( void ) const
+	{
+		// initialize elements
+		  for (auto & outer_array : pixels)  
+		  {
+		      for(auto & inner_array : outer_array)
+		      {
+		      	std::cout << inner_array << ' ';
+		      }
+
+		      std::cout << std::endl;
+		  }
+	}
+
+	void CPU::opcode_0xxx( CPU* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x00FF)
 		{
 			case 0x00E0:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Clear screen.");
+
+				std::fill ( &cpu->pixels[0][0],
+      		    			&cpu->pixels[0][0] + sizeof(cpu->pixels) / sizeof(cpu->pixels[0][0] ),
+      						0 );
 				break;
 			}
 			case 0x00EE:
 			{
 				// TODO: std::to_string to print HEX
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Return from subroutine.");
+
+				// To return from subroutine, pop from stack
+				if(cpu->subroutine_stack.empty())
+				{
+					util::LOG(LOGTYPE::ERROR, "00EE return from subroutine stack underflow");
+					cpu->exit = true;
+				}
+				else
+				{
+					cpu->prog_counter = cpu->subroutine_stack.top();
+					cpu->subroutine_stack.pop();
+				}
+
 				break;
 			}
 			default:{
@@ -71,42 +109,84 @@ namespace chip8
 		}
 	}
 
-	void CPU::opcode_1nnn( const unsigned int& opcode )
+	void CPU::opcode_1nnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Jump to address 1NNN.");
+		cpu->prog_counter = opcode & 0x0FFF;
 	}
 
-	void CPU::opcode_2nnn( const unsigned int& opcode )
+	void CPU::opcode_2nnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Call subroutine at 2NNN.");
+		cpu->subroutine_stack.push(opcode & 0x0FFF);
+
+		if(cpu->subroutine_stack.size() > 16)
+		{
+			util::LOG(LOGTYPE::ERROR, "2nnn return from subroutine stack overflow");
+			cpu->exit = true;
+		}
 	}
 	
-	void CPU::opcode_3xnn( const unsigned int& opcode )
+	void CPU::opcode_3xnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx reg == kk at 3xkk.");
+		unsigned int register_adr = (opcode & 0x0F00) >> 8;
+		unsigned int nn = (opcode & 0x00FF);
+
+		if(register_adr == nn)
+		{
+			cpu->prog_counter += 2;
+		}
 	}
 	
-	void CPU::opcode_4xnn( const unsigned int& opcode )
+	void CPU::opcode_4xnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx reg != kk at 4xkk.");
+		unsigned int register_adr = (opcode & 0x0F00) >> 8;
+		unsigned int nn = (opcode & 0x00FF);
+
+		if(register_adr != nn)
+		{
+			cpu->prog_counter += 2;
+		}
 	}
 	
-	void CPU::opcode_5xy0( const unsigned int& opcode )
-	{
+	void CPU::opcode_5xy0( CPU* cpu, const unsigned int& opcode )
+	{	
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx reg == Vy reg at 5xy0.");
+		unsigned int vx = (opcode & 0x0F00) >> 8;
+		unsigned int vy = (opcode & 0x00F0) >> 4;
+
+		if(vx == vy)
+		{
+			cpu->prog_counter += 2;
+		}
+		
 	}
 	
-	void CPU::opcode_6xnn( const unsigned int& opcode )
+	void CPU::opcode_6xnn( CPU* cpu, const unsigned int& opcode )
 	{
-		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = kk at 6xkk.");
+		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = kk at 6xkk.")
+
+		unsigned int vx = (opcode & 0x0F00) >> 8;
+		unsigned int kk = (opcode & 0x00FF);
+
+		registers[vx] = kk;
+
+
 	}
 	
-	void CPU::opcode_7xnn( const unsigned int& opcode )
+	void CPU::opcode_7xnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx + kk at 7xkk.");
+
+		unsigned int vx = (opcode & 0x0F00) >> 8;
+		unsigned int kk = (opcode & 0x00FF);
+
+		registers[vx] += kk;
 	}
 	
-	void CPU::opcode_8XYx( const unsigned int& opcode )
+	void CPU::opcode_8XYx( CPU* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x000F)
 		{
@@ -163,32 +243,32 @@ namespace chip8
 		}
 	}
 	
-	void CPU::opcode_9xy0( const unsigned int& opcode )
+	void CPU::opcode_9xy0( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx != Vy at 9xy0.");
 	}
 	
-	void CPU::opcode_Annn( const unsigned int& opcode )
+	void CPU::opcode_Annn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set I = nnn at Annn.");
 	}
 	
-	void CPU::opcode_Bxnn( const unsigned int& opcode )
+	void CPU::opcode_Bxnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Jump to nnn + V0 at Bnnn.");
 	}
 	
-	void CPU::opcode_Cxnn( const unsigned int& opcode )
+	void CPU::opcode_Cxnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = rand byte AND kk Cxkk.");
 	}
 	
-	void CPU::opcode_Dxyn( const unsigned int& opcode )
+	void CPU::opcode_Dxyn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Display n byte sprite starting at mem loc I at (Vx, Vy), set Vf = collision at Dxyn.");
 	}
 	
-	void CPU::opcode_EXxx( const unsigned int& opcode )
+	void CPU::opcode_EXxx( CPU* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x00FF)
 		{
@@ -209,7 +289,7 @@ namespace chip8
 		}
 	}
 	
-	void CPU::opcode_FXxx( const unsigned int& opcode )
+	void CPU::opcode_FXxx( CPU* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x00FF)
 		{
