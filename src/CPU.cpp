@@ -166,12 +166,12 @@ namespace chip8
 	
 	void CPU::opcode_6xnn( CPU* cpu, const unsigned int& opcode )
 	{
-		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = kk at 6xkk.")
+		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = kk at 6xkk.");
 
 		unsigned int vx = (opcode & 0x0F00) >> 8;
 		unsigned int kk = (opcode & 0x00FF);
 
-		registers[vx] = kk;
+		cpu->registers[vx] = kk;
 
 
 	}
@@ -183,7 +183,7 @@ namespace chip8
 		unsigned int vx = (opcode & 0x0F00) >> 8;
 		unsigned int kk = (opcode & 0x00FF);
 
-		registers[vx] += kk;
+		cpu->registers[vx] += kk;
 	}
 	
 	void CPU::opcode_8XYx( CPU* cpu, const unsigned int& opcode )
