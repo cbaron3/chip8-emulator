@@ -53,6 +53,19 @@ namespace chip8
 		{
 			opcodes[opcode_to_execute]( this, opcode );	
 		}
+
+		// Finally, update the timers
+		if (delay_timer > 0)
+		{
+			// Will required some sort of sleep to synchronize 60hz delay with output of the emulator
+			delay_timer -= 1;
+		}
+
+		if (sound_timer > 0)
+		{
+			// TODO: Sound left unimplemented for now
+			sound_timer -= 1;
+		}
 		
 	}
 
@@ -188,51 +201,94 @@ namespace chip8
 	
 	void CPU::opcode_8XYx( CPU* cpu, const unsigned int& opcode )
 	{
+		unsigned int vx = (opcode & 0x0F00) >> 8;
+		unsigned int vy = (opcode & 0x00F0) >> 4;
+
 		switch(opcode & 0x000F)
 		{
 			case 0x0000:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vy at 8xy0.");
+				cpu->registers[vx] = cpu->registers[vy];
 				break;	
 			}
 			case 0x0001:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx or Vy at 8xy1.");
+				cpu->registers[vx] |= cpu->registers[vy];
 				break;	
 			}
 			case 0x0002:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx and Vy at 8xy2.");
+				cpu->registers[vx] &= cpu->registers[vy];
 				break;	
 			}
 			case 0x0003:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx XOR Vy at 8xy3.");
+				cpu->registers[vx] ^= cpu->registers[vy];
 				break;	
 			}
 			case 0x0004:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx + Vy, set Vf = carry at 8xy4.");
+				cpu->registers[vx] += cpu->registers[vy];
+
+				// After adding the register contents, there needed to be a carry
+				if(cpu->registers[vy] > (0xFF -cpu->registers[vx]))
+					cpu->registers[15] = 1; //carry
+				else
+					cpu->registers[15] = 0;
+
 				break;	
 			}
 			case 0x0005:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx - Vy, set Vf = NOT borrow at 8xy5.");
+
+				// There will be a borrow because vy is greater than vx
+				if(cpu->registers[vy] > (cpu->registers[vx]))
+					cpu->registers[15] = 1; //carry
+				else
+					cpu->registers[15] = 0;
+
+				cpu->registers[vx] -= cpu->registers[vy];
+
 				break;	
 			}
 			case 0x0006:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx SHR 1 at 8xy6.");
+
+				// If LSB of VX is 1, set carry
+				cpu->registers[15] = vx & 0x01;
+
+				// Divide vx by 2
+				cpu->registers[vx] /= 2;	// TODO: looks sketchy to me, may use shift right 1
+
 				break;	
 			}
 			case 0x0007:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vy - Vx, set Vf = NOT borrow at 8xy7.");
+
+				// Borrow occurs when vx is greater than vy cause vy - vx will be negative
+				if(cpu->registers[vx] > (cpu->registers[vy]))
+					cpu->registers[15] = 0; 
+				else
+					cpu->registers[15] = 1; // carry
 				break;	
 			}
 			case 0x000E:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = Vx SHL 1 at 8xy8.");
+
+				// If MSB of VX is 1, set carry
+				cpu->registers[15] = cpu->registers[vx] >> 7; // Looks like error
+
+				// Shift left by one
+				cpu->registers[vx] <<= 1;
 				break;	
 			}
 			default:
@@ -246,21 +302,31 @@ namespace chip8
 	void CPU::opcode_9xy0( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx != Vy at 9xy0.");
+		unsigned int vx = (opcode & 0x0F00) >> 8;
+		unsigned int vy = (opcode & 0x00F0) >> 4;
+
+		if(vx == vy)
+		{
+			cpu->prog_counter += 2;
+		}
 	}
 	
 	void CPU::opcode_Annn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set I = nnn at Annn.");
+		cpu->index_register = opcode & 0x0FFF;
 	}
 	
 	void CPU::opcode_Bxnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Jump to nnn + V0 at Bnnn.");
+		cpu->index_register = opcode & 0x0FFF + cpu->registers[0];
 	}
 	
 	void CPU::opcode_Cxnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = rand byte AND kk Cxkk.");
+		// TODO: Use true random numbers c++ hash engine thingy
 	}
 	
 	void CPU::opcode_Dxyn( CPU* cpu, const unsigned int& opcode )
@@ -274,11 +340,25 @@ namespace chip8
 		{
 			case 0x009E:{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instrct if key with value Vx is pressed at Ex9E.");
+				unsigned int vx = (opcode & 0x0F00) >> 8;
+
+				if(cpu->keys[cpu->registers[vx]] == true)
+				{
+					cpu->prog_counter+=2;
+				}
+
 				break;	
 			}
 			case 0x00A1:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instrct if key with value Vx is not pressed at ExA1.");
+				unsigned int vx = (opcode & 0x0F00) >> 8;
+
+				if(cpu->keys[cpu->registers[vx]] == false)
+				{
+					cpu->prog_counter+=2;
+				}
+
 				break;	
 			}
 			default:
@@ -296,26 +376,51 @@ namespace chip8
 			case 0x0007:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set Vx = delay time value at Fx07.");
+				unsigned int vx = (opcode & 0x0F00) >> 8;
+
+				cpu->registers[vx] = cpu->delay_timer;
+
 				break;	
 			}
 			case 0x000A:
 			{
-				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Wait for ley press, store value of key in Vx at Fx0A.");
+				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Wait for key press, store value of key in Vx at Fx0A.");
+				// TODO: Looks like this is the only operation that needs to wait for prog counter. Either make prog counter increment on all other cases or implement wait for key boolean?
 				break;	
 			}
 			case 0x0015:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set delay timer = Vx at Fx15.");
+				unsigned int vx = (opcode & 0x0F00) >> 8;
+
+				cpu->delay_timer = cpu->registers[vx];
 				break;	
 			}
 			case 0x0018:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set sound timer at Fx18.");
+				unsigned int vx = (opcode & 0x0F00) >> 8;
+				
+				cpu->sound_timer = cpu->registers[vx];
 				break;	
 			}
 			case 0x001E:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Set I = I + Vx at Fx1E.");
+				unsigned int vx = (opcode & 0x0F00) >> 8;
+
+				// Set carry when overflow addition
+				if(cpu->index_register + vx > 0xFFF)
+				{
+					cpu->registers[15] = 1;
+				}
+				else
+				{
+					cpu->registers[15] = 0;
+				}
+
+				// Add
+				cpu->index_register += cpu->registers[vx];
 				break;	
 			}
 			case 0x0029:

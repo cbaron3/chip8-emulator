@@ -24,10 +24,16 @@ namespace chip8
 
 	public:
 		std::array<std::array<bool, 64>, 32> pixels;
+		std::array<bool, 16> keys;
 		std::array<unsigned int, 16> registers;
 		std::stack<unsigned int> subroutine_stack;
+
+		unsigned int delay_timer;
+		unsigned int sound_timer;
+
 		unsigned int prog_counter;
 		bool exit;
+		unsigned int index_register;
 
 	private:
 		/* CPU OPCODE FUNCTION DEFINITIONS BELOW */
