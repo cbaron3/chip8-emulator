@@ -3,12 +3,74 @@
 #include <iostream>
 #include "../include/Logger.h"
 
+/* Module functions */
+
+/**
+ * @brief      Extract register vx from input opcode
+ *
+ * @param[in]  in    opcode
+ *
+ * @return     Register vx
+ */
+unsigned int extract_vx(const unsigned int& in)
+{
+	return (in & 0x0F00) >> 8;
+}
+
+/**
+ * @brief      Extract register vy from input opcode
+ *
+ * @param[in]  in    opcode
+ *
+ * @return     Register vy
+ */
+unsigned int extract_vy(const unsigned int& in)
+{
+	return (in & 0x00F0) >> 4;
+}
+
+/**
+ * @brief      Extract value nnn from input opcode
+ *
+ * @param[in]  in    opcode
+ *
+ * @return     3 bit integer
+ */
+unsigned int extract_nnn(const unsigned int& in)
+{
+	return (in & 0x0FFF);
+}
+
+/**
+ * @brief      Extract value nnn from input opcode
+ *
+ * @param[in]  in    opcode
+ *
+ * @return     2 bit integer
+ */
+unsigned int extract_nn(const unsigned int& in)
+{
+	return (in & 0x00FF);
+}
+
+/**
+ * @brief      Extract value nnn from input opcode
+ *
+ * @param[in]  in    opcode
+ *
+ * @return     1 bit integer
+ */
+unsigned int extract_n(const unsigned int& in)
+{
+	return (in & 0x000F);
+}		
+
 namespace chip8
 {
 	CPU::CPU()
 	{	
 		prog_counter = 0;
-		exit = false;
+		exit_flag = false;
 
 		opcodes[0] =  opcode_0xxx;
 		opcodes[1] =  opcode_1nnn; 	
@@ -83,6 +145,20 @@ namespace chip8
 		  }
 	}
 
+	void CPU::print_subr_stack( void ) const
+	{
+		std::stack<unsigned int> temp_stack = subroutine_stack;
+
+		std::cout << " ########## STACK ##########" << std::endl;
+		std::cout << "Size: " << temp_stack.size() << std::endl;
+		while(!temp_stack.empty()) //body
+	    {
+	        std::cout << temp_stack.top() << " ";
+	        temp_stack.pop();
+	    }
+	    std::cout << " \n########## END ##########" << std::endl;
+	}
+
 	void CPU::opcode_0xxx( CPU* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x00FF)
@@ -105,11 +181,11 @@ namespace chip8
 				if(cpu->subroutine_stack.empty())
 				{
 					util::LOG(LOGTYPE::ERROR, "00EE return from subroutine stack underflow");
-					cpu->exit = true;
+					cpu->set_exit_flag(true);
 				}
 				else
 				{
-					cpu->prog_counter = cpu->subroutine_stack.top();
+					cpu->set_pc( cpu->subroutine_stack.top() );
 					cpu->subroutine_stack.pop();
 				}
 
@@ -125,7 +201,7 @@ namespace chip8
 	void CPU::opcode_1nnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Jump to address 1NNN.");
-		cpu->prog_counter = opcode & 0x0FFF;
+		cpu->set_pc( opcode & 0x0FFF );
 	}
 
 	void CPU::opcode_2nnn( CPU* cpu, const unsigned int& opcode )
@@ -136,19 +212,17 @@ namespace chip8
 		if(cpu->subroutine_stack.size() > 16)
 		{
 			util::LOG(LOGTYPE::ERROR, "2nnn return from subroutine stack overflow");
-			cpu->exit = true;
+			cpu->set_exit_flag(true);
 		}
 	}
 	
 	void CPU::opcode_3xnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx reg == kk at 3xkk.");
-		unsigned int register_adr = (opcode & 0x0F00) >> 8;
-		unsigned int nn = (opcode & 0x00FF);
 
-		if(cpu->registers[register_adr] == nn)
+		if(cpu->registers[extract_vy(opcode)] == extract_nn(opcode))
 		{
-			cpu->prog_counter += 2;
+			cpu->set_pc( cpu->get_pc() + 2 );
 		}
 	}
 	
@@ -156,11 +230,10 @@ namespace chip8
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + std::to_string(opcode) + ", Skip next instruct if Vx reg != kk at 4xkk.");
 		unsigned int register_adr = (opcode & 0x0F00) >> 8;
-		unsigned int nn = (opcode & 0x00FF);
 
-		if(cpu->registers[register_adr] != nn)
+		if(cpu->registers[register_adr] != extract_nn(opcode))
 		{
-			cpu->prog_counter += 2;
+			cpu->set_pc( cpu->get_pc() + 2 );
 		}
 	}
 	
@@ -172,7 +245,7 @@ namespace chip8
 
 		if(cpu->registers[vx] == cpu->registers[vy])
 		{
-			cpu->prog_counter += 2;
+			cpu->set_pc( cpu->get_pc() + 2 );
 		}
 		
 	}
@@ -265,7 +338,7 @@ namespace chip8
 				cpu->registers[15] = vx & 0x01;
 
 				// Divide vx by 2
-				cpu->registers[vx] /= 2;	// TODO: looks sketchy to me, may use shift right 1
+				cpu->registers[vx] >>= 1;	// TODO: looks sketchy to me, may use shift right 1
 
 				break;	
 			}
@@ -307,7 +380,7 @@ namespace chip8
 
 		if(vx == vy)
 		{
-			cpu->prog_counter += 2;
+			cpu->set_pc( cpu->get_pc() + 2 );
 		}
 	}
 	
@@ -344,7 +417,7 @@ namespace chip8
 
 				if(cpu->keys[cpu->registers[vx]] == true)
 				{
-					cpu->prog_counter+=2;
+					cpu->set_pc( cpu->get_pc() + 2 );
 				}
 
 				break;	
@@ -356,7 +429,7 @@ namespace chip8
 
 				if(cpu->keys[cpu->registers[vx]] == false)
 				{
-					cpu->prog_counter+=2;
+					cpu->set_pc( cpu->get_pc() + 2 );
 				}
 
 				break;	
@@ -450,7 +523,4 @@ namespace chip8
 			}
 		}
 	}
-
-
-
 } // end of chip8 namespace

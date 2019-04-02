@@ -31,11 +31,23 @@ namespace chip8
 		unsigned int delay_timer;
 		unsigned int sound_timer;
 
-		unsigned int prog_counter;
-		bool exit;
 		unsigned int index_register;
 
+		bool get_exit_flag( void ) const { return exit_flag; }
+		void set_exit_flag( const unsigned int& flag){ exit_flag = flag; }
+
+		unsigned int get_pc( void ) const { return prog_counter; }
+		void set_pc( const unsigned int& pc) { prog_counter = pc; }
+
+		void print_subr_stack( void ) const;
+
+		std::array<std::array<bool, 64>, 32> get_pixels( void ) { return pixels; }
+
 	private:
+		// Flag for exit
+		bool exit_flag;
+		unsigned int prog_counter;
+
 		/* CPU OPCODE FUNCTION DEFINITIONS BELOW */
 		typedef void(*OpcodeTable)( CPU* cpu, const unsigned int& opcode );
 

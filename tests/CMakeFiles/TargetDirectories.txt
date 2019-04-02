@@ -1,3 +1,0 @@
-/home/carlrocket/Projects/chip8-emulator/tests/CMakeFiles/edit_cache.dir
-/home/carlrocket/Projects/chip8-emulator/tests/CMakeFiles/rebuild_cache.dir
-/home/carlrocket/Projects/chip8-emulator/tests/CMakeFiles/tests.dir

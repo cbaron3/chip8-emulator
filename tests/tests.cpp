@@ -1,13 +1,7 @@
-#include "../src/Logger.cpp"
-#include "../src/Memory.cpp"
 #include <gtest/gtest.h>
 
-TEST(MemoryTest, MemoryMap)
-{
-	chip8::MemoryMap memory(10, 1);
-	ASSERT_ANY_THROW(memory.store(0, std::byte(10)));
-	ASSERT_NO_THROW(memory.store(1, std::byte(10)));
-}
+#include "test_MemoryMap.cpp"
+#include "test_CPU.cpp"
 
 int main(int argc, char **argv){
 	testing::InitGoogleTest(&argc, argv);
