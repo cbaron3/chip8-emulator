@@ -114,6 +114,15 @@ TEST_F(Chip8CPU, SetPCTest)
 // Fx07
 TEST_F(Chip8CPU, SetRegisterTest)
 {
+    // For opcode simulators
+    using namespace chip8::util;
+
+    // Test 1.
+    cpu->registers[5] = 0;
+    unsigned int temp_val = cpu->registers[5] + 10;
+    cpu->execute(set_reg_call(5, 10));
+    ASSERT_NE(0, cpu->registers[5]);
+    ASSERT_EQ(temp_val, cpu->registers[5]);
 
 }
 
