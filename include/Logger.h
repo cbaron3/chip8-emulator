@@ -10,10 +10,6 @@
 // Singleton logger class with varying levels of message types to be logged
 namespace util
 {
-
-	
-	
-
 	class Logger{
 	public:
 		enum class LOG_LEVEL{DEBUG, ERROR, NONE};

@@ -81,6 +81,7 @@ namespace chip8{
         ~MemoryMap( void ) = default;
 
     private:
+        // TODO: Doesn't really need to be a map because we always know the index we are accessing
         std::unordered_map<unsigned int, std::byte> memory_space; /** Unordered map of std::bytes with unsigned int as key to represent memory map */
 
         int start_adr_; /** Valid start address for memory _map */

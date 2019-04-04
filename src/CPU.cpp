@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../include/Logger.h"
 #include <string>
+#include <random>
 /* Module functions */
 
 /**
@@ -271,8 +272,6 @@ namespace chip8
 	
 	void CPU::opcode_6xnn( CPU* cpu, const unsigned int& opcode )
 	{
-		//std::string test = util::opcode_to_hex(opcode);
-
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = kk at 6xkk.");
 
 		unsigned int vx = (opcode & 0x0F00) >> 8;
@@ -367,7 +366,7 @@ namespace chip8
 				cpu->registers[15] = (cpu->registers[vx] & 0x01);
 
 				// Divide vx by 2
-				cpu->registers[vx] >>= 1;	// TODO: looks sketchy to me, may use shift right 1
+				cpu->registers[vx] >>= 1;
 
 				break;	
 			}
@@ -380,7 +379,7 @@ namespace chip8
 					cpu->registers[15] = 1; // carry
 				else
 					cpu->registers[15] = 0; 
-
+ 
 				cpu->registers[vx] = (cpu->registers[vy] - cpu->registers[vx]);
 				cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow. TODO: Count backwards or 0?
 
@@ -434,12 +433,47 @@ namespace chip8
 	void CPU::opcode_Cxnn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = rand byte AND kk Cxkk.");
-		// TODO: Use true random numbers c++ hash engine thingy
+		
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::uniform_real_distribution<unsigned int> dist(1, 255);
+
+		cpu->registers[vx] = dist(mt) & extract_nn(opcode);
 	}
 	
 	void CPU::opcode_Dxyn( CPU* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Display n byte sprite starting at mem loc I at (Vx, Vy), set Vf = collision at Dxyn.");
+		// Sprite display
+		// DIsplay nbyte sprite at memory location I at (vx,vy), if collision vf = collision
+		
+		// Read n bytes from memory at location I
+		unsigned int vx = extract_vx(opcode);
+		unsigned int vy = extract_vy(opcode);
+		unsigned int n =  extract_n(opcode)
+		unsigned int start_mem = index_registerl
+		
+		std::vector<unsigned int> sprite;
+		sprite.reserve(n);
+
+		for(int k = 0; k < n; k++)
+		{
+			// TODO: DANG BIG OVERHAUL, CPU NEEDS ACCESS TO MEMORY
+			sprite.emplace_back(memory->read(start_mem++));
+		}
+
+		for(int i = 0; i < SCRN_HEIGHT; i++)
+		{
+			for(int j = 0; j < SCRN_WIDTH; j++)
+			{
+				// Vx defines j, Vy defines i
+				cpu->pixels[vy % SCRN_HEIGHT][vx % SCRN_WIDTH]
+			}
+		}
+
+
+
+
 	}
 	
 	void CPU::opcode_EXxx( CPU* cpu, const unsigned int& opcode )

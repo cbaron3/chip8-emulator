@@ -1,0 +1,45 @@
+Little txt doc so I can jot down my design decisions.
+I use this to offload from my brain so crappy grammar and spelling. 
+
+4/4/2019
+
+So when unit testing, I realized that the CPU class I have made needs to be able to read from the MemoryMap class when executing the display sprite opcode
+
+At first I thought this was a problem because in my OOP brain, CPU and MemoryMap are logically separted and shouldnt be coupled. Having CPU access MemoryMap through the Emulator class just felt horribly uncohesive. My revalation is that the CPU class is miscategorized and instead of it being a CPU class its really just a Chip8Interpreter class. So I am not creating an emulator persay but more of an instruction interpreter where we output a pixel map to a screen based on the instructions.
+
+Therefore, the redesign will be
+	Emulator -> CPU
+			 -> MemoryMap
+To
+	Chip8Interpreter -> MemoryMap
+
+This is because all the emulator contents can be shifted to main.cpp int main()
+	ROM can be a loose function that takes in a Chip8Interpreter object and filepath
+
+Can reuse the memorymap for different byte-maps for other emulator/interpreters
+
+Should not need to design the Chip8Interpreter for redesign because it is the application specific code in this case
+
+After writing unit tests as well, I see that since there is no real unit testing benefit of passing the cpu into the emulator, that the emulator does not really need to be a class
+The emulator just calls the cpu and loads a rom. Further validation that current design is not well thought out
+
+Questions
+-> How do we load rom into interpreter memory map? Options:
+	1. Create memory map, load rom into memory map, pass memory map into interpreter (I like this idea)
+		Could make a menu for selecting roms but think it will just be command line for the forseable future.
+-> 	2.  Create interpreter with memory map inside of it. Call interpreter.load(...) 
+		This option seems less cohesive because the interpreter does not care about how to load the memory, it just cares about interpreting the memory that already exists
+
+Next Steps:
+0) add cppcheck and add sdl/gtest as dependency folders and not as vm requirements for portability
+00) change style https://style-guides.readthedocs.io/en/latest/cpp.html
+1) Class renaming (CPU -> Chip8Interpreter)
+2) Converting emulator into load_rom loose function
+3) Process opcode differently, more cleanly
+4) Have for loop check for draw flags and update key map in the interpreter
+5) Have interpreter take in memory map
+6) CLA for rom choice
+7) CLA for list roms
+8) get rom, put in map, pass map into interpreter, init graphics, start loop
+9) audio?
+
