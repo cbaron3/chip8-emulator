@@ -5,7 +5,8 @@
 // Every opcode has a generate function which does not care about implementation of opcodes just the value
 // I choose this method to create readable code
 // Looking at this code after writing it, i should have maybe just wrote the 4 standard opcode templates and used typedef'ing to reduce copy paste
-
+#include <string>
+#include <sstream>
 namespace chip8
 {
 	namespace util

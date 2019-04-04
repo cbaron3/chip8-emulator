@@ -44,7 +44,7 @@ TEST_F(Chip8CPU, ClearScreenTest)
 // 2. Adding an address to the stack should result in the prog counter being updated to that same value after a subroutine return
 // 3. Adding 3 different addresses should result in the same 3 address being returned in LIFO order
 // 4. Adding 17 addresses to the stack should result in stack overflow
-TEST_F(Chip8CPU, SubroutineTest)
+TEST_F(Chip8CPU, subroutine_test)
 {
     // For opcode simulators
     using namespace chip8::util;
@@ -95,7 +95,7 @@ TEST_F(Chip8CPU, SubroutineTest)
 
 // Function to test setting program counter opcode
 // 1. Get current program counter, set the pc to the current value + an offset. Verify change
-TEST_F(Chip8CPU, SetPCTest)
+TEST_F(Chip8CPU, set_pc_test)
 {
     // For opcode simulators
     using namespace chip8::util;
@@ -106,33 +106,255 @@ TEST_F(Chip8CPU, SetPCTest)
     ASSERT_EQ(cpu->get_pc(), temp_pc);
 }
 
-// Opcodes to set registers
-// 6xkk
-// 7xkk
-// 8***
-// Cxkk
-// Fx07
-TEST_F(Chip8CPU, SetRegisterTest)
+// Function to test load byte into vx opcode 6xkk
+TEST_F(Chip8CPU, ld_vx_byte_test)
 {
     // For opcode simulators
     using namespace chip8::util;
 
-    // Test 1.
-    cpu->registers[5] = 0;
-    unsigned int temp_val = cpu->registers[5] + 10;
-    cpu->execute(set_reg_call(5, 10));
-    ASSERT_NE(0, cpu->registers[5]);
-    ASSERT_EQ(temp_val, cpu->registers[5]);
+    unsigned int vx = 5, byte = 10;
+    unsigned int ld_val = cpu->registers[vx] + byte;
 
+    cpu->execute(set_reg_call(vx, byte));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+
+    ASSERT_EQ(ld_val, cpu->registers[vx]);
 }
 
-// TODO: Need to test setting registers first
+// Function to test load byte into vx opcode 6xkk
+TEST_F(Chip8CPU, add_vx_byte_test)
+{
+    // For opcode simulators
+    using namespace chip8::util;
+
+    // Test 1
+    unsigned int vx = 9, add = 100;
+    unsigned int org_val = cpu->registers[9];
+
+    cpu->execute(add_to_reg_call(vx, add));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+
+    ASSERT_EQ(org_val+add, cpu->registers[vx]); 
+}
+
+// Function to test load vy into vx opcode 8xy0
+TEST_F(Chip8CPU, ld_vx_vy_test)
+{
+    // For opcode simulators
+    using namespace chip8::util;
+
+    unsigned int vx = 2, vy = 4;
+    unsigned int org_vy = (cpu->registers[vy] = 10);    // Make sure vy is a non zero before updating vx
+
+    cpu->execute(set_reg_equal_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+
+    ASSERT_EQ(org_vy, cpu->registers[vx]);   
+    ASSERT_EQ((org_vy), cpu->registers[vy]); 
+}
+
+// Function to test load vx | vy into vx opcode 8xy1
+TEST_F(Chip8CPU, or_vx_vy_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 2, vy = 4;
+
+    unsigned int org_vx = (cpu->registers[vx] = 12);
+    unsigned int org_vy = (cpu->registers[vy] = 15);
+
+    cpu->execute(or_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+
+    ASSERT_EQ((org_vx | org_vy), cpu->registers[vx]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+}
+
+// Function to test load vx & vy into vx opcode 8xy2
+TEST_F(Chip8CPU, and_vx_vy_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 3, vy = 5;
+
+    unsigned int org_vx = (cpu->registers[vx] = 4);
+    unsigned int org_vy = (cpu->registers[vy] = 12);
+
+    cpu->execute(and_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+
+    ASSERT_EQ((org_vx & org_vy), cpu->registers[vx]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+}
+
+// Function to test load vx ^ vy into vx opcode 8xy3
+TEST_F(Chip8CPU, xor_vx_vy_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 4, vy = 6;
+
+    unsigned int org_vx = (cpu->registers[vx] = 2);
+    unsigned int org_vy = (cpu->registers[vy] = 99);
+
+    cpu->execute(xor_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx ^ org_vy), cpu->registers[vx]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+}
+
+// Function to test load vx + vy into vx opcode 8xy4
+// 1. Regular addition (carry not set)
+// 2. Overflow addition (carry set)
+TEST_F(Chip8CPU, add_vx_vy_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 12, vy = 13;
+
+    unsigned int org_vx = (cpu->registers[vx] = 50);
+    unsigned int org_vy = (cpu->registers[vy] = 25);
+
+    cpu->execute(add_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx + org_vy) & 0xFF, cpu->registers[vx]);
+    ASSERT_EQ(0, cpu->registers[15]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+
+    org_vx = (cpu->registers[vx] = 100);
+    org_vy = (cpu->registers[vy] = 200);
+
+    cpu->execute(add_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx + org_vy) & 0xFF, cpu->registers[vx]);
+    ASSERT_EQ(1, cpu->registers[15]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+}
+
+// Function to test load vx - vy into vx opcode 8xy5
+// 1. Regular subtraction (carry not set)
+// 2. Underflow subtraction (carry set)
+TEST_F(Chip8CPU, sub_vx_vy_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 0, vy = 1;
+
+    unsigned int org_vx = (cpu->registers[vx] = 60);
+    unsigned int org_vy = (cpu->registers[vy] = 30);
+
+    cpu->execute(sub_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx - org_vy) & 0xFF, cpu->registers[vx]);
+    ASSERT_EQ(0, cpu->registers[15]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+
+    org_vx = (cpu->registers[vx] = 100);
+    org_vy = (cpu->registers[vy] = 105);
+
+    cpu->execute(sub_reg_call(vx, vy));
+
+    ASSERT_EQ( (org_vx - org_vy) & 0xFF, cpu->registers[vx]);
+    ASSERT_EQ(1, cpu->registers[15]);
+    ASSERT_EQ((org_vy), cpu->registers[vy]);
+}
+
+// Function to test load vx >> 1 into vx opcode 8xy6
+TEST_F(Chip8CPU, shr_vx_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 12;
+    unsigned int org_vx = (cpu->registers[vx] = 6);
+
+    cpu->execute(shr_reg_call(vx));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx >> 1), cpu->registers[vx]);
+    ASSERT_EQ(0, cpu->registers[15]);
+
+    org_vx = (cpu->registers[vx] = 5);
+    cpu->execute(shr_reg_call(vx));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx >> 1), cpu->registers[vx]);
+    ASSERT_EQ(1, cpu->registers[15]);
+}
+
+// Function to test load vy - vx into vx opcode 8xy7
+// 1. Regular subtraction (carry not set)
+// 2. Underflow subtraction (carry set)
+TEST_F(Chip8CPU, subn_vx_vy_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 0, vy = 1;
+
+    unsigned int org_vx = (cpu->registers[vx] = 30);
+    unsigned int org_vy = (cpu->registers[vy] = 60);
+
+    cpu->execute(subn_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vy-org_vx) & 0xFF, cpu->registers[vx]);
+    ASSERT_EQ(1, cpu->registers[15]);
+
+    org_vx = (cpu->registers[vx] = 60);
+    org_vy = (cpu->registers[vy] = 30);
+
+    cpu->execute(subn_reg_call(vx, vy));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vy-org_vx) & 0xFF, cpu->registers[vx]);
+    ASSERT_EQ(0, cpu->registers[15]);
+}
+
+// Function to test load vx << 1 into vx opcode 8xyE
+TEST_F(Chip8CPU, shl_vx_test)
+{
+    // For opcode generator
+    using namespace chip8::util;
+
+    unsigned int vx = 12;
+    unsigned int org_vx = (cpu->registers[vx] = 127);
+
+    cpu->execute(shl_reg_call(vx));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx << 1), cpu->registers[vx]);
+    ASSERT_EQ(0, cpu->registers[15]);
+
+    org_vx = (cpu->registers[vx] = 129);
+    cpu->execute(shl_reg_call(vx));
+
+    ASSERT_NE(0, cpu->registers[vx]);
+    ASSERT_EQ((org_vx << 1), cpu->registers[vx]);
+    ASSERT_EQ(1, cpu->registers[15]);
+}
+
+
 // Function to test skip instruction opcodes
 // 1. 3xkk
 // 2. 4xkk
 // 3. 5xy0
 // 4. 9xy0
-TEST_F(Chip8CPU, SkipInstructTest)
+TEST_F(Chip8CPU, skip_instruct_test)
 {
 
 }

@@ -15,9 +15,19 @@ memory
 -
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/GenerateOpcodes.hpp
+string
+-
+sstream
+-
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 string
+-
+iomanip
+-
+iostream
+-
+sstream
 -
 array
 -
@@ -37,6 +47,8 @@ iostream
 -
 ../include/Logger.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
+string
+-
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp
 iostream

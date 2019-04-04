@@ -23,17 +23,23 @@ stack
 -
 memory
 -
+chip8.h
+/home/administrator/SHARE/SHARE/other/chip8-emulator/include/chip8.h
 Memory.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Memory.h
 Logger.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 CPU.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/CPU.h
-chip8.h
-/home/administrator/SHARE/SHARE/other/chip8-emulator/include/chip8.h
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
 string
+-
+iomanip
+-
+iostream
+-
+sstream
 -
 array
 -
@@ -61,6 +67,8 @@ iostream
 -
 ../include/Logger.h
 /home/administrator/SHARE/SHARE/other/chip8-emulator/include/Logger.h
+string
+-
 
 /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Emulator.cpp
 iostream

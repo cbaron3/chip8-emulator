@@ -2,10 +2,18 @@
 #define LOGGER_H
 
 #include <string>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <array>
 
 // Singleton logger class with varying levels of message types to be logged
-namespace util{
+namespace util
+{
+
+	
+	
+
 	class Logger{
 	public:
 		enum class LOG_LEVEL{DEBUG, ERROR, NONE};
@@ -21,6 +29,7 @@ namespace util{
 
 	void LOG(Logger::LOG_LEVEL level, std::string msg);
 }
+
 
 typedef util::Logger::LOG_LEVEL LOGTYPE;
 

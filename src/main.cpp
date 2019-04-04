@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 	chip8::Emulator emulator( chip8::MemoryMap::makeMemoryMap(4096, 0), chip8::CPU::makeCPU());
 
 	// TODO: Move load_fonts into load rom
-	emulator.load_rom("../roms/test/TEST");
+	emulator.load_rom("../roms/full_games/PONG");
 	emulator.print_memory();
 
 	// Game loop

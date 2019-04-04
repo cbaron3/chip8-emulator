@@ -63,22 +63,23 @@ namespace chip8{
 		
 	}
 
-	// TODO: (Carl Baron: Feb 2nd): Badly designed interface between the two classes
 	void Emulator::print_memory(){
 		std::cout << *memory_map;
 	}
 
 	void Emulator::next_instruction()
 	{
-		// Fetch opcode
-		uint8_t first_byte = (uint8_t) memory_map->read(prog_counter_);
+
+		unsigned int pc = chip8_cpu->get_pc();
+
+		// TODO: Clean up read short functionality into loose function?
+		uint8_t first_byte = (uint8_t) memory_map->read(pc);
 		prog_counter_++;
-		uint8_t second_byte = (uint8_t) memory_map->read(prog_counter_);
-		prog_counter_++;
+		uint8_t second_byte = (uint8_t) memory_map->read(pc+1);
 
 		uint16_t opcode =  ((first_byte << 8) | (second_byte));
-
-		if (prog_counter_ >= MEM_SPACE){
+		
+		if (pc >= MEM_SPACE){
 			exit(0);
 		}
 
