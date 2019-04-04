@@ -48,7 +48,7 @@ namespace chip8{
          *
          * @return     Unique MemoryMap pointer
          */
-        static std::unique_ptr<MemoryMap> makeMemoryMap( const unsigned int& mem_size, const unsigned int& start_adr );
+        static std::unique_ptr<MemoryMap> makeMemoryMap( const unsigned int& mem_size, const unsigned int& start_adr = 0);
 
         /**
          * @brief      Store a byte value in
