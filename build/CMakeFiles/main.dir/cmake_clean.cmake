@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/main.dir/src/CPU.cpp.o"
-  "CMakeFiles/main.dir/src/Emulator.cpp.o"
+  "CMakeFiles/main.dir/src/Interpreter.cpp.o"
   "CMakeFiles/main.dir/src/Logger.cpp.o"
   "CMakeFiles/main.dir/src/Memory.cpp.o"
-  "CMakeFiles/main.dir/src/Screen.cpp.o"
   "CMakeFiles/main.dir/src/main.cpp.o"
   "main.pdb"
   "main"

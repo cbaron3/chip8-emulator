@@ -8,4 +8,4 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 # Link run tests
 add_executable(tests tests.cpp)
-target_link_libraries(tests ${GTEST_LIBRARIES} pthread)
+target_link_libraries(tests gmock pthread)

@@ -17,7 +17,7 @@ namespace chip8{
     class MemoryMap
     {
 
-    private:
+    protected:
 
         /**
          * @brief      Constructs the object. Private so user has to call factory method
@@ -32,6 +32,7 @@ namespace chip8{
          */
         MemoryMap( const unsigned int& mem_size, const unsigned int& start_adr = 0 );
 
+    private:
         /**
          * @brief      Validate that address is within range. Throw exception if not
          *
@@ -59,7 +60,7 @@ namespace chip8{
          *
          * @return     True if value was added to memory map. Else, false
          */
-        bool store( const std::byte& val, const unsigned int& adr, const bool& update = false );
+        virtual bool store( const std::byte& val, const unsigned int& adr, const bool& update = false );
 
         /**
          * @brief      Read a byte value from memory map
@@ -68,7 +69,7 @@ namespace chip8{
          *
          * @return     Value of byte at address location
          */
-        std::byte read( const unsigned int& adr ) const; 
+        virtual std::byte read( const unsigned int& adr ) const; 
 
         /**
          * @brief      Overloaded ostream operator to print memory map contents as bytes in hex

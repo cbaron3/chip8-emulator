@@ -1,10 +1,20 @@
-#include "../include/CPU.h"
+#include "../include/Interpreter.h"
 
 #include <iostream>
 #include "../include/Logger.h"
+#include "../include/Chip8.h"
 #include <string>
+#include <algorithm>
+#include <cstddef>
+#include <bitset>
 #include <random>
 /* Module functions */
+
+
+unsigned int extract_v( const unsigned int& in)
+{
+	return (in & 0xF000) >> 12;
+}
 
 /**
  * @brief      Extract register vx from input opcode
@@ -82,10 +92,12 @@ std::string opcode_to_hex(const unsigned int& opcode)
 
 namespace chip8
 {
-	CPU::CPU()
+	// Default constructor that initializes members to default state
+	Interpreter::Interpreter()
 	{	
-		prog_counter = 0x200;
-		exit_flag = false;
+		m_program_counter = 0x200;
+		m_exit_flag = false;
+		m_draw_flag = false;
 
 		opcodes[0] =  opcode_0xxx;
 		opcodes[1] =  opcode_1nnn; 	
@@ -103,82 +115,64 @@ namespace chip8
 		opcodes[13] = opcode_Dxyn;
 		opcodes[14] = opcode_EXxx;
 		opcodes[15] = opcode_FXxx;
-
+		
 		std::fill ( &pixels[0][0],
 	      		    &pixels[0][0] + sizeof(pixels) / sizeof(pixels[0][0]),
-	      			0 );
+	      			false );
 	}
 
-	std::unique_ptr<CPU> CPU::makeCPU()
-	{
-		struct MakeUniquePublic : public CPU {};
-		return std::make_unique<MakeUniquePublic>(); 
+	Interpreter::Interpreter( std::unique_ptr<MemoryMap> memory ) : Interpreter() 
+	{ 
+		memory_map = std::move(memory);
 	}
 
-	void CPU::execute( const unsigned int& opcode)
+	std::unique_ptr<Interpreter> Interpreter::make_interpreter( std::unique_ptr<MemoryMap> memory )
 	{
-		// Extract MSB nibble which contains opcode specifier
-		unsigned int opcode_to_execute = (opcode & 0xF000) >> 12;
+		struct MakeUniquePublic : public Interpreter {
+			MakeUniquePublic( std::unique_ptr<MemoryMap> memory ) : Interpreter(std::move(memory)) {}
+      	};
 
-		// Call the appropriate opcode
-		// TODO: Add safer opcode handling
-		if(opcode_to_execute < 0 || opcode_to_execute > 15)
-		{
-			// do nothing
-		}
-		else
-		{
-			opcodes[opcode_to_execute]( this, opcode );	
-		}
+		return std::make_unique<MakeUniquePublic>( std::move(memory) ); 
+	}
+
+	void Interpreter::next_instruction( void )
+	{
+		// Get opcode without modifying program counter
+		unsigned int opcode =  ( 
+								 ( ( unsigned int ) memory_map->read( m_program_counter ) << 8) | 
+							     ( ( unsigned int ) memory_map->read( m_program_counter+1 ) ) 
+							   );	
+		
+		execute(opcode);
 
 		// Finally, update the timers
-		if (delay_timer > 0)
+		if (m_delay_timer > 0)
 		{
 			// Will required some sort of sleep to synchronize 60hz delay with output of the emulator
-			delay_timer -= 1;
+			m_delay_timer -= 1;
 		}
 
-		if (sound_timer > 0)
+		if (m_sound_timer > 0)
 		{
 			// TODO: Sound left unimplemented for now
-			sound_timer -= 1;
+			m_sound_timer -= 1;
 		}
 
-		prog_counter += 2;
-		
+		// TODO: Move out of here? Add boolean or move into each opcode or something
+		m_program_counter += 2;
 	}
 
-	void CPU::print_pixels( void ) const
-	{
-		// initialize elements
-		  for (auto & outer_array : pixels)  
-		  {
-		      for(auto & inner_array : outer_array)
-		      {
-		      	std::cout << inner_array << ' ';
-		      }
 
-		      std::cout << std::endl;
-		  }
+	void Interpreter::execute( const unsigned int& opcode )
+	{
+		// Execute an opcode
+		opcodes[extract_v(opcode)]( this, opcode );		
 	}
 
-	void CPU::print_subr_stack( void ) const
+	// Unit tested
+	void Interpreter::opcode_0xxx( Interpreter* cpu, const unsigned int& opcode )
 	{
-		std::stack<unsigned int> temp_stack = subroutine_stack;
-
-		std::cout << " ########## STACK ##########" << std::endl;
-		std::cout << "Size: " << temp_stack.size() << std::endl;
-		while(!temp_stack.empty()) //body
-	    {
-	        std::cout << temp_stack.top() << " ";
-	        temp_stack.pop();
-	    }
-	    std::cout << " \n########## END ##########" << std::endl;
-	}
-
-	void CPU::opcode_0xxx( CPU* cpu, const unsigned int& opcode )
-	{
-		switch(opcode & 0x00FF)
+		switch(extract_nn(opcode))
 		{
 			case 0x00E0:
 			{
@@ -186,7 +180,7 @@ namespace chip8
 
 				std::fill ( &cpu->pixels[0][0],
       		    			&cpu->pixels[0][0] + sizeof(cpu->pixels) / sizeof(cpu->pixels[0][0] ),
-      						0 );
+      						false );
 				break;
 			}
 			case 0x00EE:
@@ -198,11 +192,11 @@ namespace chip8
 				if(cpu->subroutine_stack.empty())
 				{
 					util::LOG(LOGTYPE::ERROR, "00EE return from subroutine stack underflow");
-					cpu->set_exit_flag(true);
+					cpu->m_exit_flag = true;
 				}
 				else
 				{
-					cpu->set_pc( cpu->subroutine_stack.top() - 2);
+					cpu->m_program_counter = ( cpu->subroutine_stack.top() - 2);
 					cpu->subroutine_stack.pop();
 				}
 
@@ -215,86 +209,81 @@ namespace chip8
 		}
 	}
 
-	void CPU::opcode_1nnn( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_1nnn( Interpreter* cpu, const unsigned int& opcode )
 	{	
 		std::string x = opcode_to_hex(opcode);
 
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", Jump to address 1NNN.");
-		cpu->set_pc( opcode & 0x0FFF );
-		cpu->set_pc( cpu->get_pc() - 2);	// Since execute +=2 the program counter and jump calls should prepare next instruction at absolute location. Nullify +=2 with a pre -=2
+		cpu->m_program_counter = ( extract_nnn(opcode) );
+		cpu->m_program_counter -= 2;	// Since execute +=2 the program counter and jump calls should prepare next instruction at absolute location. Nullify +=2 with a pre -=2
 	}
 
-	void CPU::opcode_2nnn( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_2nnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Call subroutine at 2NNN.");
-		cpu->subroutine_stack.push(opcode & 0x0FFF);
+		cpu->subroutine_stack.push( extract_nnn(opcode) );
 
 		if(cpu->subroutine_stack.size() > 16)
 		{
 			util::LOG(LOGTYPE::ERROR, "2nnn call to subroutine stack overflow");
-			cpu->set_exit_flag(true);
+			cpu->m_exit_flag = true;
 		}
 	}
 	
-	void CPU::opcode_3xnn( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_3xnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instruct if Vx reg == kk at 3xkk.");
 
-		if(cpu->registers[extract_vy(opcode)] == extract_nn(opcode))
+		if(cpu->registers[extract_vx(opcode)] == extract_nn(opcode))
 		{
-			cpu->set_pc( cpu->get_pc() + 2 );
+			cpu->m_program_counter += 2;
 		}
 	}
 	
-	void CPU::opcode_4xnn( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_4xnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instruct if Vx reg != kk at 4xkk.");
-		unsigned int register_adr = (opcode & 0x0F00) >> 8;
+		unsigned int register_adr = ( extract_vx(opcode) );
 
-		if(cpu->registers[register_adr] != extract_nn(opcode))
+		if( cpu->registers[register_adr] != extract_nn(opcode) )
 		{
-			cpu->set_pc( cpu->get_pc() + 2 );
+			cpu->m_program_counter += 2;
 		}
 	}
 	
-	void CPU::opcode_5xy0( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_5xy0( Interpreter* cpu, const unsigned int& opcode )
 	{	
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instruct if Vx reg == Vy reg at 5xy0.");
-		unsigned int vx = (opcode & 0x0F00) >> 8;
-		unsigned int vy = (opcode & 0x00F0) >> 4;
 
-		if(cpu->registers[vx] == cpu->registers[vy])
-		{
-			cpu->set_pc( cpu->get_pc() + 2 );
-		}
-		
+		if(cpu->registers[extract_vx(opcode)] == cpu->registers[extract_vy(opcode)])
+			cpu->m_program_counter += 2;
 	}
 	
-	void CPU::opcode_6xnn( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_6xnn( Interpreter* cpu, const unsigned int& opcode )
 	{
-		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = kk at 6xkk.");
-
-		unsigned int vx = (opcode & 0x0F00) >> 8;
-		unsigned int kk = (opcode & 0x00FF);
-
-		cpu->registers[vx] = kk;
-
+		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = nn at 6xnn.");
+		
+		cpu->registers[extract_vx(opcode)] = extract_nn(opcode);
 	}
 	
-	void CPU::opcode_7xnn( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_7xnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = Vx + kk at 7xkk.");
 
-		unsigned int vx = (opcode & 0x0F00) >> 8;
-		unsigned int kk = (opcode & 0x00FF);
-
-		cpu->registers[vx] += kk;
+		cpu->registers[extract_vx(opcode)] += extract_nn(opcode);
 	}
 	
-	void CPU::opcode_8XYx( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_8XYx( Interpreter* cpu, const unsigned int& opcode )
 	{
-		unsigned int vx = (opcode & 0x0F00) >> 8;
-		unsigned int vy = (opcode & 0x00F0) >> 4;
+		unsigned int vx = extract_vx(opcode), vy = extract_vy(opcode);
 
 		switch(opcode & 0x000F)
 		{
@@ -404,102 +393,101 @@ namespace chip8
 		}
 	}
 	
-	void CPU::opcode_9xy0( CPU* cpu, const unsigned int& opcode )
+	// Unit tested
+	void Interpreter::opcode_9xy0( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instruct if Vx != Vy at 9xy0.");
-		unsigned int vx = (opcode & 0x0F00) >> 8;
-		unsigned int vy = (opcode & 0x00F0) >> 4;
-
-		if(vx == vy)
-		{
-			cpu->set_pc( cpu->get_pc() + 2 );
-		}
+		
+		if( extract_vx(opcode) != extract_vy(opcode) )
+			cpu->m_program_counter += 2;
 	}
 	
-	void CPU::opcode_Annn( CPU* cpu, const unsigned int& opcode )
+	void Interpreter::opcode_Annn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set I = nnn at Annn.");
-		cpu->index_register = opcode & 0x0FFF;
+		cpu->m_index_register = extract_nnn(opcode);
 	}
 	
-	void CPU::opcode_Bxnn( CPU* cpu, const unsigned int& opcode )
+	void Interpreter::opcode_Bxnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Jump to nnn + V0 at Bnnn.");
-		cpu->set_pc( opcode & 0x0FFF + cpu->registers[0]);
-		cpu->set_pc( cpu->get_pc() - 2);
-
+		cpu->m_program_counter = ( extract_nnn(opcode) + cpu->registers[0]);
+		cpu->m_program_counter -= 2;
 	}
 	
-	void CPU::opcode_Cxnn( CPU* cpu, const unsigned int& opcode )
+	void Interpreter::opcode_Cxnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = rand byte AND kk Cxkk.");
 		
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::uniform_real_distribution<unsigned int> dist(1, 255);
+		std::uniform_real_distribution<float> dist(0.0, 255.0);
 
-		cpu->registers[vx] = dist(mt) & extract_nn(opcode);
+		cpu->registers[extract_vx(opcode)] = ((unsigned int) dist(mt)) & extract_nn(opcode);
 	}
 	
-	void CPU::opcode_Dxyn( CPU* cpu, const unsigned int& opcode )
+	void Interpreter::opcode_Dxyn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Display n byte sprite starting at mem loc I at (Vx, Vy), set Vf = collision at Dxyn.");
 		// Sprite display
 		// DIsplay nbyte sprite at memory location I at (vx,vy), if collision vf = collision
 		
+		// A sprite has a width of 8 pixels and a height of n pixels
+
+
 		// Read n bytes from memory at location I
 		unsigned int vx = extract_vx(opcode);
 		unsigned int vy = extract_vy(opcode);
-		unsigned int n =  extract_n(opcode)
-		unsigned int start_mem = index_registerl
-		
-		std::vector<unsigned int> sprite;
-		sprite.reserve(n);
+		unsigned int n =  extract_n(opcode);
 
-		for(int k = 0; k < n; k++)
-		{
-			// TODO: DANG BIG OVERHAUL, CPU NEEDS ACCESS TO MEMORY
-			sprite.emplace_back(memory->read(start_mem++));
-		}
+		cpu->registers[15] = 0;
 
-		for(int i = 0; i < SCRN_HEIGHT; i++)
+		for(int i = 0; i < n; i++)
 		{
-			for(int j = 0; j < SCRN_WIDTH; j++)
+			unsigned int pixel_8bitrow = (uint8_t) cpu->memory_map->read(cpu->m_index_register + n);
+
+			for(int j = 0; j < 8; j++)
 			{
-				// Vx defines j, Vy defines i
-				cpu->pixels[vy % SCRN_HEIGHT][vx % SCRN_WIDTH]
+				// The x's and y's get confusing because vx is for y coord and vy is for x coord
+				unsigned int x = (vy+j) % SCRN_HEIGHT;
+				unsigned int y = (vx+i) % SCRN_WIDTH;
+
+				// j represents position in bits as well. j = 0 means msb of pixel_8bitrow
+				// CLEAR bits starting from MSB first every loop, working our way down to the LSB
+				// pixel state is a boolean. on or off
+				bool pixel_state = (pixel_8bitrow & (1 << (7-j)));
+
+				// Set carry flag if a pixel is erased. The only time a pixel will be erased is if the pixel at vx,vy == pixel_state incoming
+				if ( cpu->pixels[x][y] == pixel_state )
+				{
+					cpu->registers[15] = 1;
+				} 
+
+				cpu->pixels[x][y] ^= pixel_state;
 			}
 		}
 
-
-
-
+		cpu->m_draw_flag = true;
 	}
 	
-	void CPU::opcode_EXxx( CPU* cpu, const unsigned int& opcode )
+	void Interpreter::opcode_EXxx( Interpreter* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x00FF)
 		{
 			case 0x009E:{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instrct if key with value Vx is pressed at Ex9E.");
-				unsigned int vx = (opcode & 0x0F00) >> 8;
 
-				if(cpu->keys[cpu->registers[vx]] == true)
-				{
-					cpu->set_pc( cpu->get_pc() + 2 );
-				}
+				if(cpu->keys[cpu->registers[extract_vx(opcode)]] == true)
+					cpu->m_program_counter += 2;
 
 				break;	
 			}
 			case 0x00A1:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instrct if key with value Vx is not pressed at ExA1.");
-				unsigned int vx = (opcode & 0x0F00) >> 8;
 
-				if(cpu->keys[cpu->registers[vx]] == false)
-				{
-					cpu->set_pc( cpu->get_pc() + 2 );
-				}
+				if(cpu->keys[cpu->registers[extract_vx(opcode)]] == false)
+					cpu->m_program_counter += 2;
 
 				break;	
 			}
@@ -511,51 +499,52 @@ namespace chip8
 		}
 	}
 	
-	void CPU::opcode_FXxx( CPU* cpu, const unsigned int& opcode )
+	void Interpreter::opcode_FXxx( Interpreter* cpu, const unsigned int& opcode )
 	{
 		switch(opcode & 0x00FF)
 		{
 			case 0x0007:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = delay time value at Fx07.");
-				unsigned int vx = (opcode & 0x0F00) >> 8;
 
-				cpu->registers[vx] = cpu->delay_timer;
+				cpu->registers[extract_vx(opcode)] = cpu->m_delay_timer;
 
 				break;	
 			}
 			case 0x000A:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Wait for key press, store value of key in Vx at Fx0A.");
-				// TODO: Looks like this is the only operation that needs to wait for prog counter. Either make prog counter increment on all other cases or implement wait for key boolean?
-				cpu->set_pc(cpu->get_pc()-2);	// Does this solve the problem? Enter execute, go to this opcode, decrement pc, increment same amount before leaving execute. Net pc change is 0 and does not affect others?
-				// Just need wait for key press functionality?
-				// Wrap pc -= 2 in if statement checking for key in key array
+				// TODO: This seems inefficient ngl
+				bool key_press = false;
+
+				for(const bool& key : cpu->keys)
+					key_press |= key;
+
+				if(key_press == false)
+					cpu->m_program_counter -= 2;
+
 				break;	
 			}
 			case 0x0015:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set delay timer = Vx at Fx15.");
-				unsigned int vx = (opcode & 0x0F00) >> 8;
 
-				cpu->delay_timer = cpu->registers[vx];
+				cpu->m_delay_timer = cpu->registers[extract_vx(opcode)];
 				break;	
 			}
 			case 0x0018:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set sound timer at Fx18.");
-				unsigned int vx = (opcode & 0x0F00) >> 8;
 				
-				cpu->sound_timer = cpu->registers[vx];
+				cpu->m_sound_timer = cpu->registers[extract_vx(opcode)];
 				break;	
 			}
 			case 0x001E:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set I = I + Vx at Fx1E.");
-				unsigned int vx = (opcode & 0x0F00) >> 8;
 
 				// Set carry when overflow addition
-				if(cpu->index_register + vx > 0xFFF)
+				if(cpu->m_index_register + extract_vx(opcode) > 0xFFF)
 				{
 					cpu->registers[15] = 1;
 				}
@@ -565,27 +554,56 @@ namespace chip8
 				}
 
 				// Add
-				cpu->index_register += cpu->registers[vx];
+				cpu->m_index_register += cpu->registers[extract_vx(opcode)];
 				break;	
 			}
 			case 0x0029:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set I = location of sprite for digit Vx at Fx29.");
+				// Vx stores a hexidecimal sprite 0x00 to 0x0F and they each take up 5 spots in memory
+				unsigned int vx = extract_vx(opcode);
+				cpu->m_index_register = cpu->registers[vx] * 5;
 				break;	
 			}
 			case 0x0033:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set BCD rep of Vx in mem loc I, I+1, I+2 at Fx33.");
+				// BCD means we need to take the up to 3 digit long value (max 255) and store each digit in a seperate memory location
+				// Hundreds digit in I, tens in I+i, ones at I+2
+				
+				unsigned int vx_value = cpu->registers[extract_vx(opcode)];
+				cpu->memory_map->store( (std::byte)(vx_value / 100)      , cpu->m_index_register, true);		// Hundreds. Divide by 100, left integer handle rounding
+				cpu->memory_map->store( (std::byte)((vx_value / 10) % 10), cpu->m_index_register + 1, true);		// Tens. Divide by 10, then module base 10
+				cpu->memory_map->store( (std::byte)(vx_value % 10)       , cpu->m_index_register + 2, true);		// Ones. Module base 10
+
 				break;	
 			}
 			case 0x0055:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Store registers V0 through Vx in mem starting at loc I at Fx55.");
+				unsigned int vx = extract_vx(opcode);
+				unsigned int start_ir = cpu->ir();
+
+				for(int i = 0; i <= vx; i++, start_ir++)
+				{
+					// Store register[i]
+					cpu->memory_map->store( (std::byte) cpu->registers[i], start_ir, true);
+				}
+
 				break;	
 			}
 			case 0x0065:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Read registers V0 through Vx from mem starting at loc I at Fx65.");
+				unsigned int vx = extract_vx(opcode);
+				unsigned int start_ir = cpu->ir();
+
+				for(int i = 0; i <= vx; i++, start_ir++)
+				{
+					// Read into register[i]
+					cpu->registers[i] = (unsigned int) cpu->memory_map->read( start_ir );
+				}
+
 				break;	
 			}
 			default:

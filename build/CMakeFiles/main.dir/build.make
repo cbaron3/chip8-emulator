@@ -57,57 +57,33 @@ include CMakeFiles/main.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/main.dir/flags.make
 
-CMakeFiles/main.dir/src/CPU.cpp.o: CMakeFiles/main.dir/flags.make
-CMakeFiles/main.dir/src/CPU.cpp.o: ../src/CPU.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/main.dir/src/CPU.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/CPU.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/CPU.cpp
+CMakeFiles/main.dir/src/Interpreter.cpp.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/src/Interpreter.cpp.o: ../src/Interpreter.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/main.dir/src/Interpreter.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Interpreter.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Interpreter.cpp
 
-CMakeFiles/main.dir/src/CPU.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/CPU.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/CPU.cpp > CMakeFiles/main.dir/src/CPU.cpp.i
+CMakeFiles/main.dir/src/Interpreter.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/Interpreter.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Interpreter.cpp > CMakeFiles/main.dir/src/Interpreter.cpp.i
 
-CMakeFiles/main.dir/src/CPU.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/CPU.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/CPU.cpp -o CMakeFiles/main.dir/src/CPU.cpp.s
+CMakeFiles/main.dir/src/Interpreter.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/Interpreter.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Interpreter.cpp -o CMakeFiles/main.dir/src/Interpreter.cpp.s
 
-CMakeFiles/main.dir/src/CPU.cpp.o.requires:
+CMakeFiles/main.dir/src/Interpreter.cpp.o.requires:
 
-.PHONY : CMakeFiles/main.dir/src/CPU.cpp.o.requires
+.PHONY : CMakeFiles/main.dir/src/Interpreter.cpp.o.requires
 
-CMakeFiles/main.dir/src/CPU.cpp.o.provides: CMakeFiles/main.dir/src/CPU.cpp.o.requires
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.o.provides.build
-.PHONY : CMakeFiles/main.dir/src/CPU.cpp.o.provides
+CMakeFiles/main.dir/src/Interpreter.cpp.o.provides: CMakeFiles/main.dir/src/Interpreter.cpp.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Interpreter.cpp.o.provides.build
+.PHONY : CMakeFiles/main.dir/src/Interpreter.cpp.o.provides
 
-CMakeFiles/main.dir/src/CPU.cpp.o.provides.build: CMakeFiles/main.dir/src/CPU.cpp.o
-
-
-CMakeFiles/main.dir/src/Emulator.cpp.o: CMakeFiles/main.dir/flags.make
-CMakeFiles/main.dir/src/Emulator.cpp.o: ../src/Emulator.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/main.dir/src/Emulator.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Emulator.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Emulator.cpp
-
-CMakeFiles/main.dir/src/Emulator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/Emulator.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Emulator.cpp > CMakeFiles/main.dir/src/Emulator.cpp.i
-
-CMakeFiles/main.dir/src/Emulator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/Emulator.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Emulator.cpp -o CMakeFiles/main.dir/src/Emulator.cpp.s
-
-CMakeFiles/main.dir/src/Emulator.cpp.o.requires:
-
-.PHONY : CMakeFiles/main.dir/src/Emulator.cpp.o.requires
-
-CMakeFiles/main.dir/src/Emulator.cpp.o.provides: CMakeFiles/main.dir/src/Emulator.cpp.o.requires
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.o.provides.build
-.PHONY : CMakeFiles/main.dir/src/Emulator.cpp.o.provides
-
-CMakeFiles/main.dir/src/Emulator.cpp.o.provides.build: CMakeFiles/main.dir/src/Emulator.cpp.o
+CMakeFiles/main.dir/src/Interpreter.cpp.o.provides.build: CMakeFiles/main.dir/src/Interpreter.cpp.o
 
 
 CMakeFiles/main.dir/src/Logger.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/Logger.cpp.o: ../src/Logger.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/main.dir/src/Logger.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/main.dir/src/Logger.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Logger.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp
 
 CMakeFiles/main.dir/src/Logger.cpp.i: cmake_force
@@ -131,7 +107,7 @@ CMakeFiles/main.dir/src/Logger.cpp.o.provides.build: CMakeFiles/main.dir/src/Log
 
 CMakeFiles/main.dir/src/Memory.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/Memory.cpp.o: ../src/Memory.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/main.dir/src/Memory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/main.dir/src/Memory.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Memory.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Memory.cpp
 
 CMakeFiles/main.dir/src/Memory.cpp.i: cmake_force
@@ -153,33 +129,9 @@ CMakeFiles/main.dir/src/Memory.cpp.o.provides: CMakeFiles/main.dir/src/Memory.cp
 CMakeFiles/main.dir/src/Memory.cpp.o.provides.build: CMakeFiles/main.dir/src/Memory.cpp.o
 
 
-CMakeFiles/main.dir/src/Screen.cpp.o: CMakeFiles/main.dir/flags.make
-CMakeFiles/main.dir/src/Screen.cpp.o: ../src/Screen.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/main.dir/src/Screen.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Screen.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Screen.cpp
-
-CMakeFiles/main.dir/src/Screen.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/Screen.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Screen.cpp > CMakeFiles/main.dir/src/Screen.cpp.i
-
-CMakeFiles/main.dir/src/Screen.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/Screen.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Screen.cpp -o CMakeFiles/main.dir/src/Screen.cpp.s
-
-CMakeFiles/main.dir/src/Screen.cpp.o.requires:
-
-.PHONY : CMakeFiles/main.dir/src/Screen.cpp.o.requires
-
-CMakeFiles/main.dir/src/Screen.cpp.o.provides: CMakeFiles/main.dir/src/Screen.cpp.o.requires
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.o.provides.build
-.PHONY : CMakeFiles/main.dir/src/Screen.cpp.o.provides
-
-CMakeFiles/main.dir/src/Screen.cpp.o.provides.build: CMakeFiles/main.dir/src/Screen.cpp.o
-
-
 CMakeFiles/main.dir/src/main.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/main.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/main.dir/src/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/main.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/main.cpp
 
 CMakeFiles/main.dir/src/main.cpp.i: cmake_force
@@ -203,25 +155,21 @@ CMakeFiles/main.dir/src/main.cpp.o.provides.build: CMakeFiles/main.dir/src/main.
 
 # Object files for target main
 main_OBJECTS = \
-"CMakeFiles/main.dir/src/CPU.cpp.o" \
-"CMakeFiles/main.dir/src/Emulator.cpp.o" \
+"CMakeFiles/main.dir/src/Interpreter.cpp.o" \
 "CMakeFiles/main.dir/src/Logger.cpp.o" \
 "CMakeFiles/main.dir/src/Memory.cpp.o" \
-"CMakeFiles/main.dir/src/Screen.cpp.o" \
 "CMakeFiles/main.dir/src/main.cpp.o"
 
 # External object files for target main
 main_EXTERNAL_OBJECTS =
 
-main: CMakeFiles/main.dir/src/CPU.cpp.o
-main: CMakeFiles/main.dir/src/Emulator.cpp.o
+main: CMakeFiles/main.dir/src/Interpreter.cpp.o
 main: CMakeFiles/main.dir/src/Logger.cpp.o
 main: CMakeFiles/main.dir/src/Memory.cpp.o
-main: CMakeFiles/main.dir/src/Screen.cpp.o
 main: CMakeFiles/main.dir/src/main.cpp.o
 main: CMakeFiles/main.dir/build.make
 main: CMakeFiles/main.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable main"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -229,11 +177,9 @@ CMakeFiles/main.dir/build: main
 
 .PHONY : CMakeFiles/main.dir/build
 
-CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/CPU.cpp.o.requires
-CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/Emulator.cpp.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/Interpreter.cpp.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/Logger.cpp.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/Memory.cpp.o.requires
-CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/Screen.cpp.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/main.cpp.o.requires
 
 .PHONY : CMakeFiles/main.dir/requires

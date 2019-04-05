@@ -123,59 +123,32 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
-src/CPU.o: src/CPU.cpp.o
+src/Interpreter.o: src/Interpreter.cpp.o
 
-.PHONY : src/CPU.o
-
-# target to build an object file
-src/CPU.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.o
-.PHONY : src/CPU.cpp.o
-
-src/CPU.i: src/CPU.cpp.i
-
-.PHONY : src/CPU.i
-
-# target to preprocess a source file
-src/CPU.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.i
-.PHONY : src/CPU.cpp.i
-
-src/CPU.s: src/CPU.cpp.s
-
-.PHONY : src/CPU.s
-
-# target to generate assembly for a file
-src/CPU.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/CPU.cpp.s
-.PHONY : src/CPU.cpp.s
-
-src/Emulator.o: src/Emulator.cpp.o
-
-.PHONY : src/Emulator.o
+.PHONY : src/Interpreter.o
 
 # target to build an object file
-src/Emulator.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.o
-.PHONY : src/Emulator.cpp.o
+src/Interpreter.cpp.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Interpreter.cpp.o
+.PHONY : src/Interpreter.cpp.o
 
-src/Emulator.i: src/Emulator.cpp.i
+src/Interpreter.i: src/Interpreter.cpp.i
 
-.PHONY : src/Emulator.i
+.PHONY : src/Interpreter.i
 
 # target to preprocess a source file
-src/Emulator.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.i
-.PHONY : src/Emulator.cpp.i
+src/Interpreter.cpp.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Interpreter.cpp.i
+.PHONY : src/Interpreter.cpp.i
 
-src/Emulator.s: src/Emulator.cpp.s
+src/Interpreter.s: src/Interpreter.cpp.s
 
-.PHONY : src/Emulator.s
+.PHONY : src/Interpreter.s
 
 # target to generate assembly for a file
-src/Emulator.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Emulator.cpp.s
-.PHONY : src/Emulator.cpp.s
+src/Interpreter.cpp.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Interpreter.cpp.s
+.PHONY : src/Interpreter.cpp.s
 
 src/Logger.o: src/Logger.cpp.o
 
@@ -231,33 +204,6 @@ src/Memory.cpp.s:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Memory.cpp.s
 .PHONY : src/Memory.cpp.s
 
-src/Screen.o: src/Screen.cpp.o
-
-.PHONY : src/Screen.o
-
-# target to build an object file
-src/Screen.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.o
-.PHONY : src/Screen.cpp.o
-
-src/Screen.i: src/Screen.cpp.i
-
-.PHONY : src/Screen.i
-
-# target to preprocess a source file
-src/Screen.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.i
-.PHONY : src/Screen.cpp.i
-
-src/Screen.s: src/Screen.cpp.s
-
-.PHONY : src/Screen.s
-
-# target to generate assembly for a file
-src/Screen.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/Screen.cpp.s
-.PHONY : src/Screen.cpp.s
-
 src/main.o: src/main.cpp.o
 
 .PHONY : src/main.o
@@ -294,21 +240,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... main"
 	@echo "... edit_cache"
-	@echo "... src/CPU.o"
-	@echo "... src/CPU.i"
-	@echo "... src/CPU.s"
-	@echo "... src/Emulator.o"
-	@echo "... src/Emulator.i"
-	@echo "... src/Emulator.s"
+	@echo "... src/Interpreter.o"
+	@echo "... src/Interpreter.i"
+	@echo "... src/Interpreter.s"
 	@echo "... src/Logger.o"
 	@echo "... src/Logger.i"
 	@echo "... src/Logger.s"
 	@echo "... src/Memory.o"
 	@echo "... src/Memory.i"
 	@echo "... src/Memory.s"
-	@echo "... src/Screen.o"
-	@echo "... src/Screen.i"
-	@echo "... src/Screen.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
