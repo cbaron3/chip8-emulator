@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=c++17
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/administrator/SHARE/SHARE/other/chip8-emulator/include 
+CXX_INCLUDES = -I/usr/include/SDL2 -I/home/cbaron/Projects/chip8-emulator/include 
 
