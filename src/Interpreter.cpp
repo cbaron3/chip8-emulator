@@ -116,9 +116,7 @@ namespace chip8
 		opcodes[14] = opcode_EXxx;
 		opcodes[15] = opcode_FXxx;
 		
-		std::fill ( &pixels[0][0],
-	      		    &pixels[0][0] + sizeof(pixels) / sizeof(pixels[0][0]),
-	      			false );
+		pixels = {};
 	}
 
 	Interpreter::Interpreter( std::unique_ptr<MemoryMap> memory ) : Interpreter() 
@@ -178,9 +176,8 @@ namespace chip8
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Clear screen.");
 
-				std::fill ( &cpu->pixels[0][0],
-      		    			&cpu->pixels[0][0] + sizeof(cpu->pixels) / sizeof(cpu->pixels[0][0] ),
-      						false );
+				cpu->pixels = {};
+
 				break;
 			}
 			case 0x00EE:
@@ -188,17 +185,8 @@ namespace chip8
 				// TODO: std::to_string to print HEX
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Return from subroutine.");
 
-				// To return from subroutine, pop from stack
-				if(cpu->subroutine_stack.empty())
-				{
-					util::LOG(LOGTYPE::ERROR, "00EE return from subroutine stack underflow");
-					cpu->m_exit_flag = true;
-				}
-				else
-				{
-					cpu->m_program_counter = ( cpu->subroutine_stack.top() - 2);
-					cpu->subroutine_stack.pop();
-				}
+				--cpu->sp;
+				cpu->m_program_counter = cpu->subroutine_stack[cpu->sp];
 
 				break;
 			}
@@ -223,13 +211,11 @@ namespace chip8
 	void Interpreter::opcode_2nnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Call subroutine at 2NNN.");
-		cpu->subroutine_stack.push( extract_nnn(opcode) );
+		
+		cpu->subroutine_stack[cpu->sp] = cpu->m_program_counter;
+		cpu->sp += 1;
 
-		if(cpu->subroutine_stack.size() > 16)
-		{
-			util::LOG(LOGTYPE::ERROR, "2nnn call to subroutine stack overflow");
-			cpu->m_exit_flag = true;
-		}
+		cpu->m_program_counter = extract_nnn(opcode);
 	}
 	
 	// Unit tested
@@ -268,8 +254,9 @@ namespace chip8
 	void Interpreter::opcode_6xnn( Interpreter* cpu, const unsigned int& opcode )
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = nn at 6xnn.");
-		
-		cpu->registers[extract_vx(opcode)] = extract_nn(opcode);
+	
+		cpu->registers[extract_vx(opcode)] = extract_nn(opcode)&0x00FF;
+		util::LOG(LOGTYPE::DEBUG, "Register: " + std::to_string(extract_vx(opcode)) + " is now: " + std::to_string(extract_nn(opcode)));
 	}
 	
 	// Unit tested
@@ -277,7 +264,7 @@ namespace chip8
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = Vx + kk at 7xkk.");
 
-		cpu->registers[extract_vx(opcode)] += extract_nn(opcode);
+		cpu->registers[extract_vx(opcode)] += extract_nn(opcode)&0x00FF;
 	}
 	
 	// Unit tested
@@ -318,9 +305,8 @@ namespace chip8
 
 
 				// After adding the register contents, there needed to be a carry
-				if(cpu->registers[vx] > 0xFF)	// Could use smaller width int but then still need to keep only lower 8 bits
+				if(cpu->registers[vy] > (0xFF - cpu->registers[vx]))	// Could use smaller width int but then still need to keep only lower 8 bits
 				{	
-					cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow
 					cpu->registers[15] = 1; //carry
 				}
 				else
@@ -333,7 +319,7 @@ namespace chip8
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = Vx - Vy, set Vf = NOT borrow at 8xy5.");
 
 				// There will be a borrow because vy is greater than vx
-				if(cpu->registers[vy] > (cpu->registers[vx]))
+				if(cpu->registers[vx] > (cpu->registers[vy]))
 				{					
 					cpu->registers[15] = 1; //carry
 				}
@@ -343,7 +329,7 @@ namespace chip8
 				}
 
 				cpu->registers[vx] -= cpu->registers[vy];
-				cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow. TODO: Count backwards or 0?
+				//cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow. TODO: Count backwards or 0?
 
 				break;	
 			}
@@ -370,7 +356,7 @@ namespace chip8
 					cpu->registers[15] = 0; 
  
 				cpu->registers[vx] = (cpu->registers[vy] - cpu->registers[vx]);
-				cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow. TODO: Count backwards or 0?
+				// cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow. TODO: Count backwards or 0?
 
 				break;	
 			}
@@ -398,7 +384,7 @@ namespace chip8
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Skip next instruct if Vx != Vy at 9xy0.");
 		
-		if( extract_vx(opcode) != extract_vy(opcode) )
+		if( cpu->registers[extract_vx(opcode)] != cpu->registers[extract_vy(opcode)] )
 			cpu->m_program_counter += 2;
 	}
 	
@@ -406,6 +392,7 @@ namespace chip8
 	{
 		util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set I = nnn at Annn.");
 		cpu->m_index_register = extract_nnn(opcode);
+		util::LOG(LOGTYPE::DEBUG, "Index register is now: " + std::to_string(extract_nnn(opcode)));
 	}
 	
 	void Interpreter::opcode_Bxnn( Interpreter* cpu, const unsigned int& opcode )
@@ -421,7 +408,7 @@ namespace chip8
 		
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::uniform_real_distribution<float> dist(0.0, 255.0);
+		std::uniform_real_distribution<float> dist(0.0, 256.0);
 
 		cpu->registers[extract_vx(opcode)] = ((unsigned int) dist(mt)) & extract_nn(opcode);
 	}
@@ -436,36 +423,60 @@ namespace chip8
 
 
 		// Read n bytes from memory at location I
-		unsigned int vx = extract_vx(opcode);
-		unsigned int vy = extract_vy(opcode);
-		unsigned int n =  extract_n(opcode);
+		unsigned int vx = cpu->registers[extract_vx(opcode)];
+		unsigned int vy = cpu->registers[extract_vy(opcode)];
+		unsigned int height = extract_n(opcode);
+
+		unsigned short pixel;
 
 		cpu->registers[15] = 0;
-
-		for(int i = 0; i < n; i++)
+		for(int y = 0; y < height; ++y)
 		{
-			unsigned int pixel_8bitrow = (uint8_t) cpu->memory_map->read(cpu->m_index_register + n);
+			pixel = (unsigned short) cpu->memory_map->read(cpu->m_index_register + y);
 
-			for(int j = 0; j < 8; j++)
+			for(int x = 0; x < 8; ++x)
 			{
-				// The x's and y's get confusing because vx is for y coord and vy is for x coord
-				unsigned int x = (vy+j) % SCRN_HEIGHT;
-				unsigned int y = (vx+i) % SCRN_WIDTH;
+				if((pixel & (0x80 >> x)) != 0)
+                    {	
+                        if(cpu->pixels[(vx + x + ((vy + y) * 64))] == 0xFFFFFFFF)
+                        {
+                            cpu->registers[15] = 1;
+                        }
 
-				// j represents position in bits as well. j = 0 means msb of pixel_8bitrow
-				// CLEAR bits starting from MSB first every loop, working our way down to the LSB
-				// pixel state is a boolean. on or off
-				bool pixel_state = (pixel_8bitrow & (1 << (7-j)));
-
-				// Set carry flag if a pixel is erased. The only time a pixel will be erased is if the pixel at vx,vy == pixel_state incoming
-				if ( cpu->pixels[x][y] == pixel_state )
-				{
-					cpu->registers[15] = 1;
-				} 
-
-				cpu->pixels[x][y] ^= pixel_state;
+                        cpu->pixels[(vx + x + ((vy + y) * 64))] ^= 0xFFFFFFFF;
+                    }
 			}
 		}
+
+		// cpu->registers[15] = 0;
+
+		// std::cout << std::dec << cpu->m_index_register << " " << n;
+
+		// for(int i = 0; i < n; i++)
+		// {
+
+		// 	unsigned int pixel_8bitrow = (uint8_t) cpu->memory_map->read(cpu->m_index_register + n);
+
+		// 	for(int j = 0; j < 8; j++)
+		// 	{
+		// 		// The x's and y's get confusing because vx is for y coord and vy is for x coord
+		// 		unsigned int x = (vy+j) % SCRN_HEIGHT;
+		// 		unsigned int y = (vx+i) % SCRN_WIDTH;
+
+		// 		// j represents position in bits as well. j = 0 means msb of pixel_8bitrow
+		// 		// CLEAR bits starting from MSB first every loop, working our way down to the LSB
+		// 		// pixel state is a boolean. on or off
+		// 		bool pixel_state = (pixel_8bitrow & (1 << (7-j)));
+
+		// 		// Set carry flag if a pixel is erased. The only time a pixel will be erased is if the pixel at vx,vy == pixel_state incoming
+		// 		if ( cpu->pixels[x][y] == pixel_state )
+		// 		{
+		// 			cpu->registers[15] = 1;
+		// 		} 
+
+		// 		cpu->pixels[x][y] ^= pixel_state;
+		// 	}
+		// }
 
 		cpu->m_draw_flag = true;
 	}
@@ -518,7 +529,10 @@ namespace chip8
 				bool key_press = false;
 
 				for(const bool& key : cpu->keys)
+				{
+
 					key_press |= key;
+				}
 
 				if(key_press == false)
 					cpu->m_program_counter -= 2;
@@ -544,7 +558,7 @@ namespace chip8
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set I = I + Vx at Fx1E.");
 
 				// Set carry when overflow addition
-				if(cpu->m_index_register + extract_vx(opcode) > 0xFFF)
+				if(cpu->m_index_register + cpu->registers[extract_vx(opcode)] > 0xFFF)
 				{
 					cpu->registers[15] = 1;
 				}
@@ -582,27 +596,29 @@ namespace chip8
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Store registers V0 through Vx in mem starting at loc I at Fx55.");
 				unsigned int vx = extract_vx(opcode);
-				unsigned int start_ir = cpu->ir();
 
-				for(int i = 0; i <= vx; i++, start_ir++)
+				for(int i = 0; i <= vx; ++i)
 				{
 					// Store register[i]
-					cpu->memory_map->store( (std::byte) cpu->registers[i], start_ir, true);
+					cpu->memory_map->store( (std::byte) cpu->registers[i], cpu->m_index_register+i, true);
 				}
 
+				cpu->m_index_register += (vx + 1);
+				
 				break;	
 			}
 			case 0x0065:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Read registers V0 through Vx from mem starting at loc I at Fx65.");
 				unsigned int vx = extract_vx(opcode);
-				unsigned int start_ir = cpu->ir();
 
-				for(int i = 0; i <= vx; i++, start_ir++)
+				for(int i = 0; i <= vx; ++i)
 				{
 					// Read into register[i]
-					cpu->registers[i] = (unsigned int) cpu->memory_map->read( start_ir );
+					cpu->registers[i] = (uint8_t) cpu->memory_map->read( cpu->m_index_register + i );
 				}
+
+				cpu->m_index_register += (vx + 1);
 
 				break;	
 			}

@@ -3,6 +3,8 @@
 
 #include <array>
 #include <stack>
+#include <iostream>
+#include "Chip8.h"
 #include <memory>           // Memory for unique ptr
 
 #include "Memory.h"
@@ -34,13 +36,30 @@ namespace chip8
 		unsigned int ir( void ) const { return m_index_register; }
 
 		// Screen pixel get
-		std::array<std::array<bool, 64>, 32> screen( void ) { return pixels; }
+		std::array<uint32_t, 2048> screen( void ) { return pixels; }
+
+		// Screen pixel print
+		void debug_screen( void )
+		{
+			for(int i = 0; i <2048; ++i)
+			{
+			      		
+			      std::cout << pixels[i] << " ";
+
+			      if(i%64 == 0)
+			      {
+			      	std::cout << std::endl;
+			      }
+			      
+			  }
+		}
+		
 
 		// Screen pixel get
-		std::array<unsigned int, 16> register_map( void ) { return registers; }
+		std::array<uint8_t, 16> register_map( void ) { return registers; }
 
 		// Set keys externally
-		void sync_keys(std::array<bool, 16> t_keys){ this->keys = t_keys; }
+		void sync_keys(std::array<bool, 16> t_keys){ this->keys = t_keys; /* debug_keys(); */ }
 
 		// Exit program flag
 		bool exit( void ) const { return m_exit_flag; }
@@ -62,6 +81,14 @@ namespace chip8
 		// Private constructor to enforce unique pointer factory method
 		Interpreter(std::unique_ptr<MemoryMap> memory);
 
+		void debug_keys( void )
+		{
+			for(int i = 0; i < 16; ++i)
+			{
+				std::cout << chip8::sdl_key_strings[i] << " " << std::boolalpha << keys[i] << std::endl;
+			}
+		}
+
 		// Execute an opcode
 		void execute( const unsigned int& opcode );
 
@@ -75,16 +102,17 @@ namespace chip8
 		unsigned int m_delay_timer, m_sound_timer, m_index_register, m_program_counter;
 
 		// Screen
-		std::array<std::array<bool, 64>, 32> pixels;
+		std::array<uint32_t, 64*32> pixels;
 
 		// Key pressed state
 		std::array<bool, 16> keys;
 
 		// Register values
-		std::array<unsigned int, 16> registers;
+		std::array<uint8_t, 16> registers;
 
 		// Subroutine stack
-		std::stack<unsigned int> subroutine_stack;
+		std::array<uint16_t, 16> subroutine_stack;
+		uint16_t sp;
 
 		/* CPU OPCODE FUNCTION DEFINITIONS BELOW */
 		typedef void(*OpcodeTable)( Interpreter* cpu, const unsigned int& opcode );

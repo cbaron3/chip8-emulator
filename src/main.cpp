@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <string>
 
 #include <chrono>
@@ -16,23 +17,25 @@
 
 
 const std::array<unsigned int, 16> key_types = {
-	SDLK_1,		// 1
-	SDLK_2,		// 2	
-	SDLK_3,		// 3
-	SDLK_4,		// C
-	SDLK_q,		// 4
-	SDLK_w,		// 5
-	SDLK_e,		// 6
-	SDLK_r,		// D
-	SDLK_a,		// 7
-	SDLK_s,		// 8
-	SDLK_d,		// 9
-	SDLK_f,		// E
-	SDLK_z,		// A
-	SDLK_x,		// 0
-	SDLK_c,		// B
-	SDLK_v		// F
+    SDLK_x,
+    SDLK_1,
+    SDLK_2,
+    SDLK_3,
+    SDLK_q,
+    SDLK_w,
+    SDLK_e,
+    SDLK_a,
+    SDLK_s,
+    SDLK_d,
+    SDLK_z,
+    SDLK_c,
+    SDLK_4,
+    SDLK_r,
+    SDLK_f,
+    SDLK_v,
 };
+
+
 
 const unsigned int SDL_SCRN_WIDTH = 1024;
 const unsigned int SDL_SCRN_HEIGHT = 512;
@@ -41,8 +44,17 @@ std::array<bool, 16> key_state = {};
 
 std::unique_ptr<chip8::MemoryMap> load_rom(std::string rom_file_path);
 
+void debug_keys( void )
+{
+	for(int i = 0; i < 16; ++i)
+	{
+		std::cout << chip8::sdl_key_strings[i] << " " << std::boolalpha <<key_state[i] << std::endl;
+	}
+}
+
 int main(int argc, char **argv){
-	std::string file_path = "../roms/programs/Chip8 emulator Logo [Garstyciuks].ch8";
+	//https://slack-files.com/T3CH37TNX-F3RKEUKL4-b05ab4930d
+	std::string file_path = "../roms/test/BC_test.ch8";
 
 	// Skeleton for input parsing
 	switch (argc) {
@@ -158,32 +170,21 @@ int main(int argc, char **argv){
 			}
 			
 		}
+
 		// Update key map. SDL key events modify global key state array. Dont make it global
+		// debug_keys();
 		interpreter->sync_keys(key_state);
 
 		if( interpreter->draw() == true )
 		{
 			// SDL 2.0	
 			util::LOG(LOGTYPE::DEBUG, "Draw flag set, prepping screen state for texture update");
-			std::array<std::array<bool, 64>, 32> screen_state = interpreter->screen();
+			std::array<uint32_t, 2048> screen_state = interpreter->screen();
 
-
-			unsigned int x = 0;
-			for( int i = 0; i < 32; ++i )
+			//pixels = interpreter->screen();
+			for( int i = 0; i < 2048; ++i )
 			{
-				for( int j = 0; j < 64; ++j )
-				{
-					if(screen_state[i][j] == true)
-					{
-						pixels[x++] = 0xFFFFFFFF;
-					}
-					else
-					{
-						pixels[x++] = 0x00000000;
-					}
-					
-					
-				}
+				pixels[i] = screen_state[i];
 			}
 
 			util::LOG(LOGTYPE::DEBUG, "Draw flag set, screen prepped for update");
@@ -194,6 +195,8 @@ int main(int argc, char **argv){
 			SDL_RenderPresent(renderer);	
 		}
 
+		std::cout << "################# Screen #################" << std::endl;
+		interpreter->debug_screen();
 		std::this_thread::sleep_for(std::chrono::microseconds(1200));
 	}
 
@@ -212,6 +215,11 @@ std::unique_ptr<chip8::MemoryMap> load_rom(std::string rom_file_path)
 	for(auto &font_byte : chip8::FONTSET)
 	{
 		memory_map->store( (std::byte) font_byte, mem_adr++);
+	}
+
+	while(mem_adr < chip8::PROG_START)
+	{
+		memory_map->store( (std::byte) 0, mem_adr++);
 	}
 
 	// Open rom file

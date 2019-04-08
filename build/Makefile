@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cbaron/Projects/chip8-emulator
+CMAKE_SOURCE_DIR = /home/administrator/SHARE/SHARE/other/chip8-emulator
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cbaron/Projects/chip8-emulator/build
+CMAKE_BINARY_DIR = /home/administrator/SHARE/SHARE/other/chip8-emulator/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cbaron/Projects/chip8-emulator/build/CMakeFiles /home/cbaron/Projects/chip8-emulator/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles /home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cbaron/Projects/chip8-emulator/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
