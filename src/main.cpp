@@ -54,8 +54,8 @@ void debug_keys( void )
 
 int main(int argc, char **argv){
 	//https://slack-files.com/T3CH37TNX-F3RKEUKL4-b05ab4930d
-	std::string file_path = "../roms/test/BC_test.ch8";
-
+	//std::string file_path = "../roms/test/BC_test.ch8";
+	std::string file_path = "../roms/full_games/PONG";
 	// Skeleton for input parsing
 	switch (argc) {
 	    case 1:
@@ -197,7 +197,7 @@ int main(int argc, char **argv){
 
 		std::cout << "################# Screen #################" << std::endl;
 		interpreter->debug_screen();
-		std::this_thread::sleep_for(std::chrono::microseconds(1200));
+		std::this_thread::sleep_for(std::chrono::microseconds(12000));
 	}
 
 	util::LOG(LOGTYPE::DEBUG, "ROM finished executing, ending program...");

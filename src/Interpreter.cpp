@@ -216,6 +216,10 @@ namespace chip8
 		cpu->sp += 1;
 
 		cpu->m_program_counter = extract_nnn(opcode);
+
+		if (cpu->sp >= 16) {
+			cpu->m_exit_flag = true;
+		}
 	}
 	
 	// Unit tested
@@ -301,32 +305,28 @@ namespace chip8
 			case 0x0004:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = Vx + Vy, set Vf = carry at 8xy4.");
-				cpu->registers[vx] += cpu->registers[vy];
-
-
+				
 				// After adding the register contents, there needed to be a carry
-				if(cpu->registers[vy] > (0xFF - cpu->registers[vx]))	// Could use smaller width int but then still need to keep only lower 8 bits
+				if(cpu->registers[vy] + cpu->registers[vx] > 0xFF)	// Could use smaller width int but then still need to keep only lower 8 bits
 				{	
 					cpu->registers[15] = 1; //carry
 				}
 				else
 					cpu->registers[15] = 0;
 
+				cpu->registers[vx] += cpu->registers[vy];
+
+
+
+
 				break;	
 			}
 			case 0x0005:
 			{
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = Vx - Vy, set Vf = NOT borrow at 8xy5.");
+	
+					cpu->registers[15] = cpu->registers[vx] > (cpu->registers[vy]); //carry
 
-				// There will be a borrow because vy is greater than vx
-				if(cpu->registers[vx] > (cpu->registers[vy]))
-				{					
-					cpu->registers[15] = 1; //carry
-				}
-				else
-				{
-					cpu->registers[15] = 0;
-				}
 
 				cpu->registers[vx] -= cpu->registers[vy];
 				//cpu->registers[vx] &= 0xFF; // Keep only lowest 8 bits if overflow. TODO: Count backwards or 0?
@@ -365,10 +365,10 @@ namespace chip8
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set Vx = Vx SHL 1 at 8xy8.");
 
 				// If MSB of VX is 1, set carry
-				cpu->registers[15] = cpu->registers[vx] >> 7; // Looks like error
+				cpu->registers[15] = (cpu->registers[vx]&0x80) >> 7; // Looks like error
 
 				// Shift left by one
-				cpu->registers[vx] <<= 1;
+				cpu->registers[vx] = (cpu->registers[vx] << 1) & 0xFF;
 				break;	
 			}
 			default:
@@ -423,8 +423,8 @@ namespace chip8
 
 
 		// Read n bytes from memory at location I
-		unsigned int vx = cpu->registers[extract_vx(opcode)];
-		unsigned int vy = cpu->registers[extract_vy(opcode)];
+		unsigned int Vx = cpu->registers[extract_vx(opcode)];
+		unsigned int Vy = cpu->registers[extract_vy(opcode)];
 		unsigned int height = extract_n(opcode);
 
 		unsigned short pixel;
@@ -438,12 +438,14 @@ namespace chip8
 			{
 				if((pixel & (0x80 >> x)) != 0)
                     {	
-                        if(cpu->pixels[(vx + x + ((vy + y) * 64))] == 0xFFFFFFFF)
-                        {
-                            cpu->registers[15] = 1;
-                        }
+                    	int px = ((Vx + x) & 63);
+						int py = ((Vy + y) & 31);
 
-                        cpu->pixels[(vx + x + ((vy + y) * 64))] ^= 0xFFFFFFFF;
+						int pixelPos = (64 * py) + px;
+
+                        cpu->registers[15] = (cpu->pixels[pixelPos] > 0) & (pixel);
+
+                        cpu->pixels[pixelPos] ^= 0xFFFFFFFF;
                     }
 			}
 		}
@@ -558,17 +560,17 @@ namespace chip8
 				util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Set I = I + Vx at Fx1E.");
 
 				// Set carry when overflow addition
-				if(cpu->m_index_register + cpu->registers[extract_vx(opcode)] > 0xFFF)
-				{
-					cpu->registers[15] = 1;
-				}
-				else
-				{
-					cpu->registers[15] = 0;
-				}
+				// if(cpu->m_index_register + cpu->registers[extract_vx(opcode)] > 0xFFF)
+				// {
+				// 	cpu->registers[15] = 1;
+				// }
+				// else
+				// {
+				// 	cpu->registers[15] = 0;
+				// }
 
 				// Add
-				cpu->m_index_register += cpu->registers[extract_vx(opcode)];
+				cpu->m_index_register = (cpu->m_index_register + cpu->registers[extract_vx(opcode)])&0xFFFF;
 				break;	
 			}
 			case 0x0029:
@@ -603,8 +605,8 @@ namespace chip8
 					cpu->memory_map->store( (std::byte) cpu->registers[i], cpu->m_index_register+i, true);
 				}
 
-				cpu->m_index_register += (vx + 1);
-				
+				cpu->m_index_register += vx + 1;
+
 				break;	
 			}
 			case 0x0065:
@@ -618,7 +620,7 @@ namespace chip8
 					cpu->registers[i] = (uint8_t) cpu->memory_map->read( cpu->m_index_register + i );
 				}
 
-				cpu->m_index_register += (vx + 1);
+				cpu->m_index_register += vx + 1;
 
 				break;	
 			}

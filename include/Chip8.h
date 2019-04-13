@@ -1,6 +1,8 @@
 #ifndef CHIP8_H
 #define CHIP8_H
 
+#include <array>
+
 // File for keeping holding Chip8 system variables
 namespace chip8{
   constexpr size_t MEM_SPACE = 0x0FFF;   // Const for denoting size of memory map
