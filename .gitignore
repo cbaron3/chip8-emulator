@@ -32,7 +32,7 @@
 *.app
 
 # Ignore build folder contents
-build/*
+build
 
 # vscode gitignore
 .vscode/*
