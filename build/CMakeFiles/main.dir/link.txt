@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/main.dir/src/Interpreter.cpp.o CMakeFiles/main.dir/src/Logger.cpp.o CMakeFiles/main.dir/src/Memory.cpp.o CMakeFiles/main.dir/src/main.cpp.o  -o main -lSDL2 
