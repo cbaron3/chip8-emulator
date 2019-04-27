@@ -15,82 +15,47 @@
 #include "../include/Memory.h"
 #include "../include/Logger.h"
 
-
-const std::array<unsigned int, 16> key_types = {
-    SDLK_x,
-    SDLK_1,
-    SDLK_2,
-    SDLK_3,
-    SDLK_q,
-    SDLK_w,
-    SDLK_e,
-    SDLK_a,
-    SDLK_s,
-    SDLK_d,
-    SDLK_z,
-    SDLK_c,
-    SDLK_4,
-    SDLK_r,
-    SDLK_f,
-    SDLK_v,
-};
-
-
-
-const unsigned int SDL_SCRN_WIDTH = 1024;
-const unsigned int SDL_SCRN_HEIGHT = 512;
- 
-std::array<bool, 16> key_state = {};	
-
+// Used for loading the rom
 std::unique_ptr<chip8::MemoryMap> load_rom(std::string rom_file_path);
 
-void debug_keys( void )
-{
-	for(int i = 0; i < 16; ++i)
-	{
-		std::cout << chip8::sdl_key_strings[i] << " " << std::boolalpha <<key_state[i] << std::endl;
-	}
-}
+// Constant screen size variables
+const unsigned int SDL_SCRN_WIDTH = 1024, SDL_SCRN_HEIGHT = 512;
+
+// SDl2 keys in order for CHIP8
+const std::array<unsigned int, 16> key_types = { SDLK_x, SDLK_1, SDLK_2, SDLK_3, SDLK_q, SDLK_w, SDLK_e, SDLK_a, SDLK_s, SDLK_d, SDLK_z, SDLK_c, SDLK_4, SDLK_r, SDLK_f, SDLK_v,};
 
 int main(int argc, char **argv){
-	//https://slack-files.com/T3CH37TNX-F3RKEUKL4-b05ab4930d
-	//std::string file_path = "../roms/test/BC_test.ch8";
-	std::string file_path = "../roms/full_games/PONG";
-	// Skeleton for input parsing
+	std::string file_path = "";
+
+	// Command line arg input. Lack of command line args were used for debugging
 	switch (argc) {
 	    case 1:
 	    {
-	      std::cout << "No CL arguments supplied" << std::endl;
-	      break;
-	    }
+				util::Logger::getInstance()->set_max_log_level(LOGTYPE::DEBUG);
+	      util::LOG(LOGTYPE::ERROR, "No CL arguments supplied.");
+	    } break;
 	    case 2:
 	    {
-	   	  std::string s(argv[1]);
-	      util::LOG(LOGTYPE::DEBUG, s);
-	      break;
-	    }
+	   	  file_path = (argv[1]);
+	      util::LOG(LOGTYPE::DEBUG, "ROM: " + file_path + " selected.");
+				util::Logger::getInstance()->set_max_log_level(LOGTYPE::ERROR);
+	    } break;
 	    default:
 	    {
-	      std::cout << "Invalid CL arguments supplied" << std::endl;
-	      break;
-	  }
+				util::Logger::getInstance()->set_max_log_level(LOGTYPE::ERROR);
+	      util::LOG(LOGTYPE::ERROR, "Invalid CL arguments supplied.");
+	  } break;
 	}
-
-	util::Logger::getInstance()->set_max_log_level(LOGTYPE::DEBUG);
 
 	util::LOG(LOGTYPE::DEBUG, "ROM selected, starting program...");
 
 	// Initialize memory map
 	std::unique_ptr<chip8::MemoryMap> memory_map = std::move(load_rom(file_path));
 
-	// Load ROM
-	std::cout << (*memory_map);
-
 	// Initialize interpreter
 	std::unique_ptr<chip8::Interpreter> interpreter = chip8::Interpreter::make_interpreter(std::move(memory_map));
 
 	// Setup SDL2
-	/* TODO */
 	SDL_Window* window = NULL;
 
 	// Initialize SDL
@@ -116,6 +81,7 @@ int main(int argc, char **argv){
 		exit(2);
 	}
 
+	// SDL Rendereder
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 	SDL_RenderSetLogicalSize(renderer, SDL_SCRN_WIDTH, SDL_SCRN_HEIGHT);
 
@@ -126,10 +92,8 @@ int main(int argc, char **argv){
 											  64,
 											  32);
 
-
-	uint32_t pixels[2048];
-
 	// Game loop
+	std::array<bool, 16> key_state = {};	
 	for(;;)
 	{
 		interpreter->next_instruction();
@@ -137,15 +101,11 @@ int main(int argc, char **argv){
 		SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
-			if( e.type == SDL_QUIT)
-			{
-				exit(0);
-			}
-
 			if(e.type == SDL_KEYDOWN)
 			{
 				if(e.key.keysym.sym == SDLK_ESCAPE)
 				{
+					util::LOG(LOGTYPE::ERROR, "Exiting program");
 					exit(0);
 				}
 
@@ -157,8 +117,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-
-			if(e.type == SDL_KEYUP)
+			else if(e.type == SDL_KEYUP)
 			{
 				for (int i = 0; i < 16; ++i)
 				{
@@ -168,36 +127,24 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			
 		}
 
 		// Update key map. SDL key events modify global key state array. Dont make it global
-		// debug_keys();
 		interpreter->sync_keys(key_state);
 
+		// Draw instruction
 		if( interpreter->draw() == true )
 		{
 			// SDL 2.0	
 			util::LOG(LOGTYPE::DEBUG, "Draw flag set, prepping screen state for texture update");
-			std::array<uint32_t, 2048> screen_state = interpreter->screen();
 
-			//pixels = interpreter->screen();
-			for( int i = 0; i < 2048; ++i )
-			{
-				pixels[i] = screen_state[i];
-			}
-
-			util::LOG(LOGTYPE::DEBUG, "Draw flag set, screen prepped for update");
-
-			SDL_UpdateTexture(texture, NULL, pixels, 64*sizeof(uint32_t));
+			SDL_UpdateTexture(texture, NULL, interpreter->screen().data(), 64*sizeof(uint32_t));
 			SDL_RenderClear(renderer);
 			SDL_RenderCopy(renderer, texture, NULL, NULL);
 			SDL_RenderPresent(renderer);	
 		}
 
-		std::cout << "################# Screen #################" << std::endl;
-		interpreter->debug_screen();
-		std::this_thread::sleep_for(std::chrono::microseconds(12000));
+		std::this_thread::sleep_for(std::chrono::microseconds(1200));
 	}
 
 	util::LOG(LOGTYPE::DEBUG, "ROM finished executing, ending program...");
@@ -240,12 +187,6 @@ std::unique_ptr<chip8::MemoryMap> load_rom(std::string rom_file_path)
 	else
 	{
 		util::LOG(LOGTYPE::ERROR, "File: " + rom_file_path + " failed to open.");
-	}
-
-	// Store rest of prog space with 0s cause apparently undefined memory locs shuold be 0
-	while(mem_adr < 4096)
-	{
-		memory_map->store( (std::byte) 0, mem_adr++);
 	}
 
 	return memory_map;

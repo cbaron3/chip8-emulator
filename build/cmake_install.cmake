@@ -1,4 +1,4 @@
-# Install script for directory: /home/administrator/SHARE/SHARE/other/chip8-emulator
+# Install script for directory: /home/cbaron/Development/chip8-emulator
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/administrator/SHARE/SHARE/other/chip8-emulator/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/cbaron/Development/chip8-emulator/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

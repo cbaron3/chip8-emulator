@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/administrator/SHARE/SHARE/other/chip8-emulator
+CMAKE_SOURCE_DIR = /home/cbaron/Development/chip8-emulator
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/administrator/SHARE/SHARE/other/chip8-emulator/build
+CMAKE_BINARY_DIR = /home/cbaron/Development/chip8-emulator/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/main.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/main.dir/flags.make
 
 CMakeFiles/main.dir/src/Interpreter.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/Interpreter.cpp.o: ../src/Interpreter.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/main.dir/src/Interpreter.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Interpreter.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Interpreter.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cbaron/Development/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/main.dir/src/Interpreter.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Interpreter.cpp.o -c /home/cbaron/Development/chip8-emulator/src/Interpreter.cpp
 
 CMakeFiles/main.dir/src/Interpreter.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/Interpreter.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Interpreter.cpp > CMakeFiles/main.dir/src/Interpreter.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cbaron/Development/chip8-emulator/src/Interpreter.cpp > CMakeFiles/main.dir/src/Interpreter.cpp.i
 
 CMakeFiles/main.dir/src/Interpreter.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/Interpreter.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Interpreter.cpp -o CMakeFiles/main.dir/src/Interpreter.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cbaron/Development/chip8-emulator/src/Interpreter.cpp -o CMakeFiles/main.dir/src/Interpreter.cpp.s
 
 CMakeFiles/main.dir/src/Interpreter.cpp.o.requires:
 
@@ -83,16 +83,16 @@ CMakeFiles/main.dir/src/Interpreter.cpp.o.provides.build: CMakeFiles/main.dir/sr
 
 CMakeFiles/main.dir/src/Logger.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/Logger.cpp.o: ../src/Logger.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/main.dir/src/Logger.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Logger.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cbaron/Development/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/main.dir/src/Logger.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Logger.cpp.o -c /home/cbaron/Development/chip8-emulator/src/Logger.cpp
 
 CMakeFiles/main.dir/src/Logger.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/Logger.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp > CMakeFiles/main.dir/src/Logger.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cbaron/Development/chip8-emulator/src/Logger.cpp > CMakeFiles/main.dir/src/Logger.cpp.i
 
 CMakeFiles/main.dir/src/Logger.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/Logger.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Logger.cpp -o CMakeFiles/main.dir/src/Logger.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cbaron/Development/chip8-emulator/src/Logger.cpp -o CMakeFiles/main.dir/src/Logger.cpp.s
 
 CMakeFiles/main.dir/src/Logger.cpp.o.requires:
 
@@ -107,16 +107,16 @@ CMakeFiles/main.dir/src/Logger.cpp.o.provides.build: CMakeFiles/main.dir/src/Log
 
 CMakeFiles/main.dir/src/Memory.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/Memory.cpp.o: ../src/Memory.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/main.dir/src/Memory.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Memory.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Memory.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cbaron/Development/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/main.dir/src/Memory.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/Memory.cpp.o -c /home/cbaron/Development/chip8-emulator/src/Memory.cpp
 
 CMakeFiles/main.dir/src/Memory.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/Memory.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Memory.cpp > CMakeFiles/main.dir/src/Memory.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cbaron/Development/chip8-emulator/src/Memory.cpp > CMakeFiles/main.dir/src/Memory.cpp.i
 
 CMakeFiles/main.dir/src/Memory.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/Memory.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/Memory.cpp -o CMakeFiles/main.dir/src/Memory.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cbaron/Development/chip8-emulator/src/Memory.cpp -o CMakeFiles/main.dir/src/Memory.cpp.s
 
 CMakeFiles/main.dir/src/Memory.cpp.o.requires:
 
@@ -131,16 +131,16 @@ CMakeFiles/main.dir/src/Memory.cpp.o.provides.build: CMakeFiles/main.dir/src/Mem
 
 CMakeFiles/main.dir/src/main.cpp.o: CMakeFiles/main.dir/flags.make
 CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/main.dir/src/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/main.cpp.o -c /home/administrator/SHARE/SHARE/other/chip8-emulator/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cbaron/Development/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/main.dir/src/main.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/main.cpp.o -c /home/cbaron/Development/chip8-emulator/src/main.cpp
 
 CMakeFiles/main.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/administrator/SHARE/SHARE/other/chip8-emulator/src/main.cpp > CMakeFiles/main.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cbaron/Development/chip8-emulator/src/main.cpp > CMakeFiles/main.dir/src/main.cpp.i
 
 CMakeFiles/main.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/administrator/SHARE/SHARE/other/chip8-emulator/src/main.cpp -o CMakeFiles/main.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cbaron/Development/chip8-emulator/src/main.cpp -o CMakeFiles/main.dir/src/main.cpp.s
 
 CMakeFiles/main.dir/src/main.cpp.o.requires:
 
@@ -169,7 +169,7 @@ main: CMakeFiles/main.dir/src/Memory.cpp.o
 main: CMakeFiles/main.dir/src/main.cpp.o
 main: CMakeFiles/main.dir/build.make
 main: CMakeFiles/main.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/cbaron/Development/chip8-emulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable main"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -189,6 +189,6 @@ CMakeFiles/main.dir/clean:
 .PHONY : CMakeFiles/main.dir/clean
 
 CMakeFiles/main.dir/depend:
-	cd /home/administrator/SHARE/SHARE/other/chip8-emulator/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/administrator/SHARE/SHARE/other/chip8-emulator /home/administrator/SHARE/SHARE/other/chip8-emulator /home/administrator/SHARE/SHARE/other/chip8-emulator/build /home/administrator/SHARE/SHARE/other/chip8-emulator/build /home/administrator/SHARE/SHARE/other/chip8-emulator/build/CMakeFiles/main.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/cbaron/Development/chip8-emulator/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cbaron/Development/chip8-emulator /home/cbaron/Development/chip8-emulator /home/cbaron/Development/chip8-emulator/build /home/cbaron/Development/chip8-emulator/build /home/cbaron/Development/chip8-emulator/build/CMakeFiles/main.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/main.dir/depend
 
