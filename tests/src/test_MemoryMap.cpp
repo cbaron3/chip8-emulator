@@ -1,4 +1,4 @@
-#include "../src/Memory.cpp"
+#include "../../src/Memory.cpp"
 
 TEST(MemoryTest, MemoryMap)
 {

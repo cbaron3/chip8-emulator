@@ -136,7 +136,11 @@ void Interpreter::opcode_0xxx( Interpreter* cpu, const unsigned int& opcode )
 		case 0x00EE:
 		{
 			util::LOG(LOGTYPE::DEBUG, "Opcode: " + opcode_to_hex(opcode) + ", (" + opcode_to_hex(opcode) + ", (" + std::to_string(opcode) + ")" + ") " + ", Return from subroutine.");
-			cpu->m_program_counter = cpu->m_stack[--cpu->m_sp];
+			if( cpu->m_sp != 0)
+				cpu->m_program_counter = cpu->m_stack[--cpu->m_sp];
+			else
+				cpu->m_exit_flag = true;
+			
 		} break;
 		// Unknown opcode
 		default:{
