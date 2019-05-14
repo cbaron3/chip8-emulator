@@ -11,9 +11,48 @@
 #include "SDL2/SDL.h"
 
 #include "../include/Interpreter.h"
-#include "../include/Chip8.h"
+// #include "../include/Chip8.h"
 #include "../include/Memory.h"
 #include "../include/Logger.h"
+
+  const std::array<uint8_t, 80> FONTSET = 
+  {
+    0xF0, 0x90, 0x90, 0x90, 0xF0, //0
+    0x20, 0x60, 0x20, 0x20, 0x70, //1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, //2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, //3
+    0x90, 0x90, 0xF0, 0x10, 0x10, //4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, //5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, //6
+    0xF0, 0x10, 0x20, 0x40, 0x40, //7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, //8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, //9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, //A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, //B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, //C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, //D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, //E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  //F
+   };
+
+   const std::array<std::string, 16> sdl_key_strings = {
+  "SDLK_1",   // 1
+  "SDLK_2",   // 2  
+  "SDLK_3",   // 3
+  "SDLK_4",   // C
+  "SDLK_q",   // 4
+  "SDLK_w",   // 5
+  "SDLK_e",   // 6
+  "SDLK_r",   // D
+  "SDLK_a",   // 7
+  "SDLK_s",   // 8
+  "SDLK_d",   // 9
+  "SDLK_f",   // E
+  "SDLK_z",   // A
+  "SDLK_x",   // 0
+  "SDLK_c",   // B
+  "SDLK_v"    // F
+};
 
 // Used for loading the rom
 std::unique_ptr<chip8::MemoryMap> load_rom(std::string rom_file_path);
@@ -31,18 +70,18 @@ int main(int argc, char **argv){
 	switch (argc) {
 	    case 1:
 	    {
-				util::Logger::getInstance()->set_max_log_level(LOGTYPE::DEBUG);
+				util::Logger::get_instance()->set_max_log_level(LOGTYPE::DEBUG);
 	      util::LOG(LOGTYPE::ERROR, "No CL arguments supplied.");
 	    } break;
 	    case 2:
 	    {
 	   	  file_path = (argv[1]);
 	      util::LOG(LOGTYPE::DEBUG, "ROM: " + file_path + " selected.");
-				util::Logger::getInstance()->set_max_log_level(LOGTYPE::ERROR);
+				util::Logger::get_instance()->set_max_log_level(LOGTYPE::ERROR);
 	    } break;
 	    default:
 	    {
-				util::Logger::getInstance()->set_max_log_level(LOGTYPE::ERROR);
+				util::Logger::get_instance()->set_max_log_level(LOGTYPE::ERROR);
 	      util::LOG(LOGTYPE::ERROR, "Invalid CL arguments supplied.");
 	  } break;
 	}
@@ -144,7 +183,7 @@ int main(int argc, char **argv){
 			SDL_RenderPresent(renderer);	
 		}
 
-		std::this_thread::sleep_for(std::chrono::microseconds(1200));
+		std::this_thread::sleep_for(std::chrono::microseconds(3600));
 	}
 
 	util::LOG(LOGTYPE::DEBUG, "ROM finished executing, ending program...");
@@ -159,7 +198,7 @@ std::unique_ptr<chip8::MemoryMap> load_rom(std::string rom_file_path)
 	unsigned int mem_adr = chip8::FONT_START;
 
 	// Chip8 environment variables are static constants in Chip8Interpreter
-	for(auto &font_byte : chip8::FONTSET)
+	for(auto &font_byte : FONTSET)
 	{
 		memory_map->store( (std::byte) font_byte, mem_adr++);
 	}

@@ -3,7 +3,7 @@
 #include "../include/Interpreter.h"
 #include "../src/Interpreter.cpp"
 #include "../src/Logger.cpp"
-#include "../include/GenerateOpcodes.hpp"
+#include "GenerateOpcodes.hpp"
 
 
 class MockMemory: public chip8::MemoryMap
@@ -29,7 +29,7 @@ protected:
     void SetUp() override
     {
         // Disable logging for tests
-        util::Logger::getInstance()->set_max_log_level(LOGTYPE::NONE); 
+        util::Logger::get_instance()->set_max_log_level(LOGTYPE::NONE); 
     }
 
     std::unique_ptr<chip8::Interpreter> interpreter = chip8::Interpreter::make_interpreter(std::make_unique<MockMemory>());
