@@ -16,22 +16,29 @@
 namespace chip8
 {
 
+/**
+ * @brief Singleton graphics class used simply to hide the bulk of SDL code
+ */
 class Graphics : public Singleton<Graphics>
 {
 
-    friend class Singleton<Graphics>;
-
 public:
+    /**
+     * @brief Construct a new Graphics object
+     */
     Graphics( void )
     {
+        // Initialize members to safe state
         p_window = NULL;
         p_renderer = NULL;
         p_texture = NULL;
-
         key_state = {};
     }
 
-    void init( )
+    /**
+     * @brief Initialize graphics window, renderer, and texture
+     */
+    void init( void )
     {
         // Initialize SDL
         if( SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -41,17 +48,23 @@ public:
             exit(1);
         }
 
+        // Initialize window
         init_window();
-
+        // Initialize renderer and texture
         init_texture();
     }
 
-    // For key strokes
+    /**
+     * @brief Monitor key events for chip8 controller inputs
+     * 
+     * @return std::array<bool, 16> state of all chip8 inputs. True means pressed, else false.
+     */
     std::array<bool, 16> check_events()
     {
         SDL_Event e;
 		while(SDL_PollEvent(&e))
 		{
+            // On keydown, set key state if is chip8 controller input
 			if(e.type == SDL_KEYDOWN)
 			{
 				if(e.key.keysym.sym == SDLK_ESCAPE)
@@ -68,6 +81,7 @@ public:
 					}
 				}
 			}
+            // On keyup, clear key state if is chip8 controller input
 			else if(e.type == SDL_KEYUP)
 			{
 				for (int i = 0; i < 16; ++i)
@@ -80,15 +94,19 @@ public:
 			}
 		}
 
+        // Return key state
         return key_state;
     }
 
-    // Update texture
+    /**
+     * @brief Update sdl texture and render on screen
+     * 
+     * @param screen array of pixels defining chip8 screen state of 64x32
+     */
     void update_texture( std::array<uint32_t, 64 * 32> screen )
     {
-        // SDL 2.0	
         util::LOG(LOGTYPE::DEBUG, "Draw flag set, prepping screen state for texture update");
-
+        // Magic numbers to fix
         SDL_UpdateTexture(p_texture, NULL, screen.data(), 64*sizeof(uint32_t));
         SDL_RenderClear(p_renderer);
         SDL_RenderCopy(p_renderer, p_texture, NULL, NULL);
@@ -97,8 +115,22 @@ public:
 
 protected:
 private:
+    // SDL screen size
     static const unsigned int SDL_SCRN_WIDTH = 1024, SDL_SCRN_HEIGHT = 512;
+    // Chip8 controller keys 
+    const std::array<unsigned int, 16> key_types = { SDLK_x, SDLK_1, SDLK_2, SDLK_3, 
+                                                    SDLK_q, SDLK_w, SDLK_e, SDLK_a, 
+                                                    SDLK_s, SDLK_d, SDLK_z, SDLK_c, 
+                                                    SDLK_4, SDLK_r, SDLK_f, SDLK_v,};
+    // Chip8 controller key states
+    std::array<bool, 16> key_state;
 
+    // SDL variables
+    SDL_Window*     p_window;
+    SDL_Renderer*   p_renderer;
+    SDL_Texture*    p_texture;
+
+    // Helper function for window init
     void init_window()
     {
         // Create the SDL2 window
@@ -117,6 +149,7 @@ private:
         }
     }
 
+    // Helper function for texture init
     void init_texture()
     {
         // SDL Rendereder
@@ -130,17 +163,6 @@ private:
                                                 64,
                                                 32);
     }
-
-    SDL_Window*     p_window;
-    SDL_Renderer*   p_renderer;
-    SDL_Texture*    p_texture;
-
-    const std::array<unsigned int, 16> key_types = { SDLK_x, SDLK_1, SDLK_2, SDLK_3, 
-                                                    SDLK_q, SDLK_w, SDLK_e, SDLK_a, 
-                                                    SDLK_s, SDLK_d, SDLK_z, SDLK_c, 
-                                                    SDLK_4, SDLK_r, SDLK_f, SDLK_v,};
-
-    std::array<bool, 16> key_state;
 };
 
 } // namespace chip8
