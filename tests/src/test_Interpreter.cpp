@@ -35,7 +35,6 @@ protected:
     std::unique_ptr<chip8::Interpreter> interpreter = chip8::Interpreter::make_interpreter(std::make_unique<MockMemory>());
 };
 
-// TODO: Clear screen test
 // Function to test clear screen opcode
 // 1. Set screen to non-zero state then call clear screen opcode. Pixel array should be all 0s
 TEST_F(Chip8CPU, ClearScreenTest)
@@ -67,50 +66,29 @@ TEST_F(Chip8CPU, empty_stack_subroutine_test)
 }
 
 // Functions to test subroutine opcodes
-// 2. Adding an address to the stack should result in the prog counter being updated to that same value after a subroutine return
+// 2. Calling a subroutine puts the current PC onto the stack and updates the PC to the requested value
+// Return from a subroutine should reset the PC back to the original PC pushed on to the stack
 TEST_F(Chip8CPU, simple_subroutine_push_test)
 {
     // For opcode simulators
     using namespace chip8::util;
 
-    // Test 2. Add stack entry and make sure same value is returned as program counter.
+    // subr_call adds current pc to stack, then updates program counter to param
+    unsigned int stack_pc = interpreter->m_program_counter;
     interpreter->execute(subr_call(0x345));
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";
+    ASSERT_EQ(false, interpreter->exit()) << "Stack should not overflow, exit flag is wrong";
+    
+    // Make sure pc is update after subr call
+    ASSERT_EQ(interpreter->m_program_counter, 0x345) << "Program counter is wrong";
+
+    // Return from subroutine should change pc back to original pc and should not cause stack underflow
     interpreter->execute(ret_subr_call());
-    ASSERT_EQ(interpreter->m_program_counter, 0x345 - 2) << "Program counter is wrong";
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";
+    ASSERT_EQ(interpreter->m_program_counter, stack_pc ) << "Program counter is wrong";
+    ASSERT_EQ(false, interpreter->exit()) << "Stack should not underflow, exit flag is wrong";
 }
 
 // Functions to test subroutine opcodes
-// 3. Adding 3 different addresses should result in the same 3 address being returned in LIFO order
-TEST_F(Chip8CPU, multi_subroutine_push_test)
-{
-    // For opcode simulators
-    using namespace chip8::util;
-
-    // Test 3. Add 3 stack entries and make sure they return in LIFO order.
-    interpreter->execute(subr_call(0x100));
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";
-    interpreter->execute(subr_call(0x200));
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";
-    interpreter->execute(subr_call(0x300));
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";
-
-    interpreter->execute(ret_subr_call());
-    ASSERT_EQ(interpreter->m_program_counter, 0x300-2) << "Program counter is wrong";
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";
-
-    interpreter->execute(ret_subr_call());
-    ASSERT_EQ(interpreter->m_program_counter, 0x200-2) << "Program counter is wrong";
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong"; 
-
-    interpreter->execute(ret_subr_call());
-    ASSERT_EQ(interpreter->m_program_counter, 0x100-2) << "Program counter is wrong";
-    ASSERT_EQ(false, interpreter->exit()) << "Exit flag is wrong";  
-}
-
-// Functions to test subroutine opcodes
-// 4. Adding 17 addresses to the stack should result in stack overflow
+// 3. Adding 17 addresses to the stack should result in stack overflow
 TEST_F(Chip8CPU, full_stack_subroutine_test)
 {
     // For opcode simulators
@@ -134,7 +112,7 @@ TEST_F(Chip8CPU, set_pc_test)
     // Set new pc and validate current pc gets updated
     unsigned int temp_pc = interpreter->m_program_counter + 0x100;
     interpreter->execute(set_pc_call(temp_pc));
-    ASSERT_EQ(interpreter->m_program_counter, temp_pc-2);
+    ASSERT_EQ(interpreter->m_program_counter, temp_pc);
 }
 
 // Function to test load byte into vx opcode 6xkk
@@ -298,27 +276,32 @@ TEST_F(Chip8CPU, sub_vx_vy_test)
 
     unsigned int vx = 0, vy = 1;
 
+    // Vx set to 60, Vy set to 30
     interpreter->execute(set_reg_call(vx, 60));
     unsigned int org_vx = (interpreter->m_registers[vx]);
     interpreter->execute(set_reg_call(vy, 30));
     unsigned int org_vy = (interpreter->m_registers[vy]);
 
+    // Execute sub VX, VY
     interpreter->execute(sub_reg_call(vx, vy));
 
-    ASSERT_NE(0, interpreter->m_registers[vx]);
+    // Vx should be equal to Vx - Vy and carry flag should be set cause no borrow
+    // Vy unchanged
     ASSERT_EQ((org_vx - org_vy) & 0xFF, interpreter->m_registers[vx]);
-    ASSERT_EQ(0, interpreter->m_registers[15]);
+    ASSERT_EQ(1, interpreter->m_registers[15]);
     ASSERT_EQ((org_vy), interpreter->m_registers[vy]);
 
+    // Vx set to 100, Vy to 105
     interpreter->execute(set_reg_call(vx, 100));
     org_vx = (interpreter->m_registers[vx]);
     interpreter->execute(set_reg_call(vy, 105));
     org_vy = (interpreter->m_registers[vy]);
-
     interpreter->execute(sub_reg_call(vx, vy));
 
+    // Vx should be Vx-Vy and carry flag should not be set cause borrow
+    // Vy unchanged
     ASSERT_EQ( (org_vx - org_vy) & 0xFF, interpreter->m_registers[vx]);
-    ASSERT_EQ(1, interpreter->m_registers[15]);
+    ASSERT_EQ(0, interpreter->m_registers[15]);
     ASSERT_EQ((org_vy), interpreter->m_registers[vy]);
 }
 
@@ -393,7 +376,7 @@ TEST_F(Chip8CPU, shl_vx_test)
     interpreter->execute(shl_reg_call(vx));
 
     ASSERT_NE(0, interpreter->m_registers[vx]);
-    ASSERT_EQ((org_vx << 1), interpreter->m_registers[vx]);
+    ASSERT_EQ((org_vx << 1) & 0xFF, interpreter->m_registers[vx]);
     ASSERT_EQ(0, interpreter->m_registers[15]);
 
     interpreter->execute(set_reg_call(vx, 129));
@@ -401,7 +384,7 @@ TEST_F(Chip8CPU, shl_vx_test)
     interpreter->execute(shl_reg_call(vx));
 
     ASSERT_NE(0, interpreter->m_registers[vx]);
-    ASSERT_EQ((org_vx << 1), interpreter->m_registers[vx]);
+    ASSERT_EQ((org_vx << 1) & 0xFF, interpreter->m_registers[vx]);
     ASSERT_EQ(1, interpreter->m_registers[15]);
 }
 
@@ -499,8 +482,8 @@ TEST_F(Chip8CPU, jump_ir_test)
 
     interpreter->execute(jump_pc_call(temp_pc+0x100));
 
-    ASSERT_NE(interpreter->m_program_counter, temp_pc-2+10);
-    ASSERT_EQ(interpreter->m_program_counter, temp_pc-2+10+0x100);
+    ASSERT_NE(interpreter->m_program_counter, temp_pc+10);
+    ASSERT_EQ(interpreter->m_program_counter, temp_pc+10+0x100);
 }
 
 // Function to test random setting of vx AND kk Cxkk

@@ -277,7 +277,7 @@ void Interpreter::opcode_8XYx( Interpreter* cpu, const unsigned int& opcode )
 			cpu->m_registers[15] = (cpu->m_registers[vx] & 0x01);
 
 			// Divide vx by 2
-			cpu->m_registers[vx] = cpu->m_registers[vy] >> 1;
+			cpu->m_registers[vx] = cpu->m_registers[vx] >> 1;
 
 		} break;
 		case 0x0007:
@@ -301,7 +301,7 @@ void Interpreter::opcode_8XYx( Interpreter* cpu, const unsigned int& opcode )
 			cpu->m_registers[15] = (cpu->m_registers[vx]&0x80) >> 7; // Looks like error
 
 			// Shift left by one
-			cpu->m_registers[vx] = (cpu->m_registers[vy] << 1) & 0xFF;
+			cpu->m_registers[vx] = (cpu->m_registers[vx] << 1) & 0xFF;
 				
 		} break;
 		default:
