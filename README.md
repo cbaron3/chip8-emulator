@@ -1,4 +1,4 @@
-# Chip 8 Interpreter
+# Chip 8 Emulator
 
 CHIP-8 is an interpreted programming language, developed by Joseph Weisbecker, consisting of operation codes (opcode) that dictate how a virtual machine environment operates. This project was made so I could attempt to develop my own chip8 interpreter to learn a bit more about how emulators/interpreters work.
 
