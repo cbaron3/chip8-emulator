@@ -1,6 +1,8 @@
 # Chip 8 Emulator
 
-CHIP-8 is an interpreted programming language, developed by Joseph Weisbecker, consisting of operation codes (opcode) that dictate how a virtual machine environment operates. This project was made so I could attempt to develop my own chip8 interpreter to learn a bit more about how emulators/interpreters work.
+CHIP-8 is an interpreted programming language, developed by Joseph Weisbecker, It consists of operation codes (opcodes) used to instruct a virtual environment used to make simple 8-bit games. This project was made so I could attempt to develop my own chip8 interpreter to learn a bit more about how emulators/interpreters work.
+
+![](example.gif)
 
 ## Getting Started
 
@@ -29,6 +31,8 @@ googletest (Optional, for unit testing only)
 sudo apt-get update
 sudo apt-get install libgtest-dev
 ```
+
+Furthermore, you can use setup.sh
 
 ### Installing
 
